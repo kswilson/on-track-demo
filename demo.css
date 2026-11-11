@@ -99,14 +99,14 @@ button, select { font: inherit; }
 .hand img {
   display: block; width: 100px; height: 82px;
   transform-origin: 4px 34px;
-  transform: rotate(30deg) translateX(16px);
+  transform: rotate(30deg) translateX(22px);
   filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .25));
-  animation: point 2.6s ease-in-out .8s infinite;
+  animation: point 1.5s ease-in-out .8s infinite;
 }
 @keyframes hand-in { from { opacity: 0; } }
 @keyframes point {
-  0%, 100% { transform: rotate(30deg) translateX(16px); }
-  50% { transform: rotate(30deg) translateX(3px); }
+  0%, 100% { transform: rotate(30deg) translateX(22px); }
+  50% { transform: rotate(30deg) translateX(2px); }
 }
 
 /* ---------- Panel ---------- */
@@ -193,5 +193,5 @@ button, select { font: inherit; }
   .callout::before, .callout::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .callout.changed, .hand, .hand img { animation: none; }
+  .callout.changed { animation: none; }  /* the hand keeps moving: it is the demo's only hint */
 }
