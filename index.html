@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>On Track</title>
+  <meta name="description" content="A classroom companion that helps students get started, stay on task and pack up. Demo prototype.">
+  <meta name="theme-color" content="#26567D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="On Track">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" data-home aria-label="On Track home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">On Track</span>
+    </button>
+    <div class="topbar-right">
+      <button class="timer-chip" id="timerChip" hidden aria-label="Task timer, open task">
+        <span class="timer-chip-dot" aria-hidden="true"></span><span data-timer-text>0:00</span>
+      </button>
+      <span class="lesson-label" id="lessonLabel">Maths</span>
+    </div>
+  </header>
+
+  <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
+
+  <div class="checkin" id="checkin" hidden role="alertdialog" aria-modal="true" aria-labelledby="checkinTitle">
+    <div class="checkin-card">
+      <p class="kicker" id="checkinKicker">Check-in</p>
+      <h2 id="checkinTitle">Still on task?</h2>
+      <p id="checkinBody"></p>
+      <div class="checkin-bar"><span id="checkinBar"></span></div>
+      <div class="btn-row" id="checkinBtns"></div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span>Demo prototype. AI responses are scripted.</span>
+    <span id="wakeStatus"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

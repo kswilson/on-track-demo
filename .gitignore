@@ -1,0 +1,5 @@
+# Meeting notes and source files stay local
+*.docx
+*Zone.Identifier
+*sec.endpointdlp
+image.png
