@@ -87,32 +87,25 @@ button, select { font: inherit; }
 }
 
 /* ---------- Pointing hand (first-run hint) ---------- */
+/* SVG is 90x112; the fingertip is at (43.2, 3.6). The hand comes from the
+ * lower right, tilted so the finger points up-left at the button. */
 .hand {
   position: absolute; z-index: 2; pointer-events: none;
-  width: 64px; height: 64px;
-  /* fingertip sits at (8, 2) of the 24-unit icon */
-  margin: -5px 0 0 -21px;
-  animation: hand-in .5s ease both;
+  width: 90px; height: 112px;
+  margin: -3.6px 0 0 -43.2px;
+  animation: hand-in .8s ease both;
 }
-.hand svg { display: block; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .35)); animation: tap 1.6s ease-in-out .5s infinite; }
-.hand-ripple {
-  position: absolute; left: 21px; top: 5px; width: 0; height: 0;
+.hand svg {
+  display: block; overflow: visible;
+  transform-origin: 43.2px 3.6px;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .28));
+  animation: point 2.4s ease-in-out .8s infinite;
+  transform: rotate(-24deg) translateY(14px);
 }
-.hand-ripple::before {
-  content: ""; position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, .9); box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
-  opacity: 0; animation: ripple 1.6s ease-out .5s infinite;
-}
-@keyframes hand-in { from { opacity: 0; transform: translate(30px, 40px); } }
-@keyframes tap {
-  0%, 100% { transform: translate(0, 14px); }
-  40% { transform: translate(0, 0) scale(.96); }
-  55% { transform: translate(0, 2px); }
-}
-@keyframes ripple {
-  0%, 35% { opacity: 0; transform: scale(.4); }
-  45% { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.5); }
+@keyframes hand-in { from { opacity: 0; transform: translate(40px, 50px); } }
+@keyframes point {
+  0%, 100% { transform: rotate(-24deg) translateY(14px); }
+  50% { transform: rotate(-24deg) translateY(3px); }
 }
 
 /* ---------- Panel ---------- */
@@ -199,5 +192,5 @@ button, select { font: inherit; }
   .callout::before, .callout::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .callout.changed, .hand, .hand svg, .hand-ripple::before { animation: none; }
+  .callout.changed, .hand, .hand svg { animation: none; }
 }

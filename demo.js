@@ -281,7 +281,7 @@ function placeHand() {
   try { el = frame.contentDocument.querySelector('[data-go="start"]'); } catch (e) { /* cross-origin */ }
   if (!el) return;
   const r = el.getBoundingClientRect();           // in app (unscaled) pixels
-  const x = r.left + r.width * 0.42, y = r.top + r.height * 0.62;
+  const x = r.left + r.width * 0.36, y = r.top + r.height * 0.74;  // just right of the title
   hand.style.left = `${(BEZEL + x) * k}px`;
   hand.style.top = `${(BEZEL + y) * k}px`;
   hand.hidden = false;
