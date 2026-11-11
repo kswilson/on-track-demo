@@ -12,6 +12,8 @@
 const SUBJECTS = {
   maths: {
     name: 'Maths', period: 'Period 3',
+    starter: { photo: 'assets/starter.jpg', focus: 'assets/part-a-q1.jpg',
+      alt: 'Section A, question 1: Burlet is on a bearing of 080° from Leighton. Find angle a.' },
     items: [
       { id: 'calc', name: 'calculator', your: 'your calculator' },
       { id: 'book', name: 'exercise book', your: 'your exercise book',
@@ -21,6 +23,8 @@ const SUBJECTS = {
   },
   physics: {
     name: 'Physics', period: 'Period 4',
+    starter: { photo: 'assets/starter-physics.svg', focus: 'assets/physics-q1.svg',
+      alt: 'Question 1: Write down the equation for density.' },
     items: [
       { id: 'labbook', name: 'lab book', your: 'your lab book',
         spareQ: 'Ask your teacher for paper.', spareYes: 'Got some', spareNo: 'None' },
@@ -30,6 +34,8 @@ const SUBJECTS = {
   },
   geography: {
     name: 'Geography', period: 'Period 2',
+    starter: { photo: 'assets/starter-geography.svg', focus: 'assets/geography-q1.svg',
+      alt: 'River diagram with features A, B and C. Question 1: Name the features labelled A, B and C.' },
     items: [
       { id: 'pencils', name: 'coloured pencils', your: 'your coloured pencils' },
       { id: 'book', name: 'exercise book', your: 'your exercise book',
@@ -83,7 +89,8 @@ const STORE_KEY = 'ontrack-demo-v1';
 let S = freshState();
 try {
   const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-  if (saved) S = Object.assign(freshState(), saved, { starterPhoto: null });
+  // Speed is never restored: presenter page always opens at 10x, the app alone in real time.
+  if (saved) S = Object.assign(freshState(), saved, { starterPhoto: null, speed: freshState().speed });
 } catch (e) { /* storage unavailable: run in memory */ }
 function save() {
   try {
@@ -288,7 +295,7 @@ function photoStep({ next, title = 'Take a photo of the starter.' }) {
     title,
     extra: `
       <div class="viewfinder" id="viewfinder">
-        <img src="assets/starter.jpg" alt="Camera view of the starter worksheet">
+        <img src="${subj().starter.photo}" alt="Camera view of the starter task">
         <span class="vf-corners" aria-hidden="true"></span>
         <span class="vf-flash" aria-hidden="true"></span>
       </div>
@@ -297,7 +304,7 @@ function photoStep({ next, title = 'Take a photo of the starter.' }) {
       document.getElementById('shutter').onclick = (e) => {
         e.currentTarget.disabled = true;
         document.getElementById('viewfinder').classList.add('snap');
-        setTimeout(() => next('assets/starter.jpg'), 450);
+        setTimeout(() => next(subj().starter.photo), 450);
       };
     },
   });
@@ -316,7 +323,7 @@ function analyse(photo, ctx) {
 function chunkStep(photo, ctx) {
   card({ screen: 'chunk',
     title: 'Just do this one.',
-    img: { src: 'assets/part-a-q1.jpg', alt: 'Section A, question 1: Burlet is on a bearing of 080° from Leighton. Find angle a.', focus: true },
+    img: { src: subj().starter.focus, alt: subj().starter.alt, focus: true },
     buttons: [
       { label: 'I can do it', kind: 'yes', on: ctx.ok },
       { label: 'Still stuck', kind: 'no', on: () => ladder(0, ctx) },

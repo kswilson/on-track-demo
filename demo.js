@@ -43,7 +43,7 @@ const NOTES = {
 
   'photo': {
     title: 'Take a photo of the task',
-    body: 'In the real app this is the iPad camera, and the photo goes to an AI along with the student\'s needs. In the demo the camera is pretend: it always captures the example bearings worksheet.',
+    body: 'In the real app this is the iPad camera, and the photo goes to an AI along with the student\'s needs. In the demo the camera is pretend: it captures an example starter for the lesson. Switch the lesson to see Physics and Geography ones.',
     try: 'Tap the shutter button.',
   },
   'analyse': {
@@ -52,7 +52,7 @@ const NOTES = {
   },
   'chunk': {
     title: 'One instruction, one question',
-    body: 'The AI sees the sheet is split into A, B and C, so it shows only question 1 of A and says "Just do this one." It won\'t give subject answers: the problem is executive function, not maths.',
+    body: 'The AI picks out the first thing to do and shows only that. On the maths sheet it spots the A, B and C levels and shows question 1 of A. It won\'t give subject answers: the problem is executive function, not the subject.',
     try: 'Tap Still stuck to see the help ladder.',
   },
 
