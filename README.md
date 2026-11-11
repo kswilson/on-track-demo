@@ -1,4 +1,12 @@
-# Lesson mode (On Track demo)
+# ▶ [Open the live demo](https://kswilson.github.io/on-track-demo/)
+
+**https://kswilson.github.io/on-track-demo/**
+
+App on its own (for an iPad home screen): https://kswilson.github.io/on-track-demo/app/
+
+---
+
+## Lesson mode (On Track demo)
 
 This is **Lesson mode**: the in-class part of the app. A classroom companion for students who struggle with executive function: getting started, staying on task, and packing up. It prompts students towards independence (brain → friend → teacher) and never gives subject answers.
 
