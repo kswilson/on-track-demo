@@ -117,7 +117,6 @@ button, select { font: inherit; }
 
 /* ---------- Panel ---------- */
 .panel { display: grid; gap: 14px; min-width: 0; }
-.panel-title { margin: 0 0 4px; font-size: 1.3rem; color: var(--text-strong); letter-spacing: .01em; }
 .panel-label {
   margin: 0 0 10px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-muted);
@@ -131,11 +130,11 @@ button, select { font: inherit; }
   box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
 }
 .callout::before {
-  content: ""; position: absolute; top: 32px; right: 100%; width: calc(var(--gap) - 4px); height: 2px;
+  content: ""; position: absolute; top: 62px; right: 100%; width: calc(var(--gap) - 4px); height: 2px;
   background: var(--accent);
 }
 .callout::after {
-  content: ""; position: absolute; top: 27px; right: calc(100% + var(--gap) - 10px); width: 12px; height: 12px; border-radius: 50%;
+  content: ""; position: absolute; top: 57px; right: calc(100% + var(--gap) - 10px); width: 12px; height: 12px; border-radius: 50%;
   background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft);
 }
 .callout.changed { animation: pop .35s ease; }
