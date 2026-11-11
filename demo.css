@@ -87,25 +87,26 @@ button, select { font: inherit; }
 }
 
 /* ---------- Pointing hand (first-run hint) ---------- */
-/* SVG is 90x112; the fingertip is at (43.2, 3.6). The hand comes from the
- * lower right, tilted so the finger points up-left at the button. */
+/* hand.png is shown at 100x82, pointing left; the fingertip is at (4, 34).
+ * It is tilted 30deg so it points up-left at the button from the lower right,
+ * and drifts along the finger's line: towards the button, then away. */
 .hand {
   position: absolute; z-index: 2; pointer-events: none;
-  width: 90px; height: 112px;
-  margin: -3.6px 0 0 -43.2px;
+  width: 100px; height: 82px;
+  margin: -34px 0 0 -4px;
   animation: hand-in .8s ease both;
 }
-.hand svg {
-  display: block; overflow: visible;
-  transform-origin: 43.2px 3.6px;
-  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .28));
-  animation: point 2.4s ease-in-out .8s infinite;
-  transform: rotate(-24deg) translateY(14px);
+.hand img {
+  display: block; width: 100px; height: 82px;
+  transform-origin: 4px 34px;
+  transform: rotate(30deg) translateX(16px);
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .25));
+  animation: point 2.6s ease-in-out .8s infinite;
 }
-@keyframes hand-in { from { opacity: 0; transform: translate(40px, 50px); } }
+@keyframes hand-in { from { opacity: 0; } }
 @keyframes point {
-  0%, 100% { transform: rotate(-24deg) translateY(14px); }
-  50% { transform: rotate(-24deg) translateY(3px); }
+  0%, 100% { transform: rotate(30deg) translateX(16px); }
+  50% { transform: rotate(30deg) translateX(3px); }
 }
 
 /* ---------- Panel ---------- */
@@ -192,5 +193,5 @@ button, select { font: inherit; }
   .callout::before, .callout::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .callout.changed, .hand, .hand svg { animation: none; }
+  .callout.changed, .hand, .hand img { animation: none; }
 }
