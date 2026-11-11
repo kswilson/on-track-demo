@@ -9,14 +9,11 @@ if (new URLSearchParams(location.search).get('tone') === 'warm') document.docume
 const NOTES = {
   'home': {
     title: 'Four buttons, one for each part of the lesson',
-    body: 'We kept the four flows we\'re sure about. It\'s in school colours, plain and silent, so it looks like an approved tool and not a game. The screen stays on for the whole lesson.',
+    body: 'Every screen gives one short instruction and nothing else to read. School colours, plain and silent, so it looks like an approved tool. The screen stays on all lesson.',
     try: 'Tap Lesson start.',
   },
-  'ls-intro': {
-    title: 'Lesson start',
-    body: 'Used as students sit down. Plain logic with no AI: a short equipment check, then the starter task.',
-    try: 'Tap Go.',
-  },
+
+
   'ls-item': {
     title: 'A checklist that knows the lesson',
     body: 'The lesson comes from the school timetable. The teacher\'s preset picks the three items that matter, such as a calculator for maths. One question at a time avoids overload.',
@@ -40,9 +37,10 @@ const NOTES = {
   },
   'ls-know': {
     title: 'Do you know what to do?',
-    body: 'If yes, they start straight away. The app prompts; it doesn\'t do the work. If no, they take a photo of the starter task.',
+    body: 'If yes, they go straight back to the four buttons and start. If no, they take a photo of the starter.',
     try: 'Tap No.',
   },
+
   'photo': {
     title: 'Take a photo of the task',
     body: 'In the real app this is the iPad camera, and the photo goes to an AI along with the student\'s needs. In the demo the camera is pretend: it always captures the example bearings worksheet.',
@@ -53,10 +51,11 @@ const NOTES = {
     body: 'The AI reads the slide or sheet. This step is scripted for the demo.',
   },
   'chunk': {
-    title: 'Small steps, not answers',
-    body: 'The AI sees the sheet is split into A, B and C, so it shows only question 1 of A. A guardrail stops it giving subject answers. The problem we\'re solving is executive function, not maths.',
+    title: 'One instruction, one question',
+    body: 'The AI sees the sheet is split into A, B and C, so it shows only question 1 of A and says "Just do this one." It won\'t give subject answers: the problem is executive function, not maths.',
     try: 'Tap Still stuck to see the help ladder.',
   },
+
   'ladder-0': {
     title: 'Brain → friend → teacher',
     body: 'Help in the order we agreed: your own notes first…',
@@ -67,13 +66,10 @@ const NOTES = {
   },
   'ladder-2': {
     title: 'Brain → friend → teacher',
-    body: '…and finally the teacher. Students wait with something useful to do instead of drifting.',
+    body: '…and finally the teacher, with one thing to do while they wait.',
   },
-  'ready': {
-    title: 'Ready to start',
-    body: 'Borrowed items are remembered. Lesson end will remind the student to give them back.',
-    try: 'Tap Start a task timer, or go Home and open Lesson end.',
-  },
+
+
   'ts-set': {
     title: 'Time first, so the clock is ticking',
     body: 'Tap buttons rather than typing: 5 + 2 = 7 minutes. The countdown stays on screen for the rest of the task.',
@@ -111,8 +107,9 @@ const NOTES = {
   },
   'checkin': {
     title: 'Check-in',
-    body: 'It flashes on screen with no sound. "You should be about halfway through" helps students judge time. I\'m stuck goes to the help ladder.',
+    body: 'Flashes on screen with no sound. The bar shows how much time has gone. I\'m stuck goes to the help ladder.',
   },
+
   'timeup': {
     title: 'Time\'s up',
     body: 'Finish the sentence you\'re on, then look up for the teacher.',
@@ -171,13 +168,12 @@ const SECTIONS = {
   start: {
     label: 'Lesson start',
     steps: [
-      ['Equipment check', ['ls-intro', 'ls-item']],
+      ['Equipment check', ['ls-item']],
       ['Missing equipment', ['ls-bag', 'ls-spare', 'ls-partner', 'ls-hand']],
       ['Do you know what to do?', ['ls-know']],
       ['Photo of the starter', ['photo', 'analyse']],
       ['One small step', ['chunk']],
       ['Brain → friend → teacher', ['ladder-0', 'ladder-1', 'ladder-2']],
-      ['Ready', ['ready']],
     ],
   },
   task: {

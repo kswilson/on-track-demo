@@ -15,7 +15,7 @@ const SUBJECTS = {
     items: [
       { id: 'calc', name: 'calculator', your: 'your calculator' },
       { id: 'book', name: 'exercise book', your: 'your exercise book',
-        spareQ: 'Ask your teacher for some lined paper.', spareYes: 'Got some', spareNo: "They haven't got any" },
+        spareQ: 'Ask your teacher for paper.', spareYes: 'Got some', spareNo: 'None' },
       { id: 'ruler', name: 'ruler', your: 'a ruler' },
     ],
   },
@@ -23,7 +23,7 @@ const SUBJECTS = {
     name: 'Physics', period: 'Period 4',
     items: [
       { id: 'labbook', name: 'lab book', your: 'your lab book',
-        spareQ: 'Ask your teacher for some paper to use today.', spareYes: 'Got some', spareNo: "They haven't got any" },
+        spareQ: 'Ask your teacher for paper.', spareYes: 'Got some', spareNo: 'None' },
       { id: 'calc', name: 'calculator', your: 'your calculator' },
       { id: 'pen', name: 'pen and pencil', your: 'a pen and a pencil' },
     ],
@@ -33,7 +33,7 @@ const SUBJECTS = {
     items: [
       { id: 'pencils', name: 'coloured pencils', your: 'your coloured pencils' },
       { id: 'book', name: 'exercise book', your: 'your exercise book',
-        spareQ: 'Ask your teacher for some lined paper.', spareYes: 'Got some', spareNo: "They haven't got any" },
+        spareQ: 'Ask your teacher for paper.', spareYes: 'Got some', spareNo: 'None' },
       { id: 'ruler', name: 'ruler', your: 'a ruler' },
     ],
   },
@@ -111,7 +111,7 @@ function render(html, bind) {
 const stepsHtml = ({ i, n }) =>
   `<div class="steps" aria-label="Step ${i + 1} of ${n}">${Array.from({ length: n }, (_, k) => `<span class="${k <= i ? 'on' : ''}"></span>`).join('')}</div>`;
 
-const LADDER = ['Brain / notes', 'Friend', 'Teacher'];
+const LADDER = ['Notes', 'Friend', 'Teacher'];
 const ladderHtml = (stage) =>
   `<div class="ladder" aria-label="Help steps">${LADDER.map((l, k) =>
     `<div class="rung ${k < stage ? 'done' : k === stage ? 'on' : ''}">${k + 1}. ${l}</div>`).join('')}</div>`;
@@ -219,15 +219,12 @@ function home() {
 
 /* ------------------------------------------------------------------ *
  * 1. Lesson start: equipment, then starter task
+ * Writing rule for every screen: one instruction, and it is the title.
+ * No labels, reasons or reassurance for the student to read past.
  * ------------------------------------------------------------------ */
 function lessonStart() {
   S.equip = {}; S.started = false; S.starterPhoto = null;
-  card({ screen: 'ls-intro',
-    kicker: 'Lesson start',
-    title: `${esc(subj().name)}. Let's check you're ready.`,
-    body: `<p>Three quick questions about your equipment, then the starter task.</p>`,
-    buttons: [{ label: 'Go', kind: 'primary', on: () => itemStep(0) }],
-  });
+  itemStep(0);
 }
 
 function itemStep(i) {
@@ -235,90 +232,59 @@ function itemStep(i) {
   if (i >= items.length) { S.started = true; save(); return knowStarter(); }
   const it = items[i];
   const steps = { i, n: items.length };
-  const kicker = `Equipment · ${i + 1} of ${items.length}`;
   const next = () => itemStep(i + 1);
   const set = (v) => { S.equip[it.id] = v; save(); };
 
-  const ask = () => card({ screen: 'ls-item',
-    kicker, steps,
+  const ask = () => card({ screen: 'ls-item', steps,
     title: `Have you got ${esc(it.your)}?`,
     buttons: [
       { label: 'Yes', kind: 'yes', on: () => { set('had'); next(); } },
       { label: 'No', kind: 'no', on: bag },
     ],
   });
-  const bag = () => card({ screen: 'ls-bag',
-    kicker, steps,
-    title: 'Is it in your bag?',
-    body: '<p>Have a proper look, including the front pocket.</p>',
+  const bag = () => card({ screen: 'ls-bag', steps,
+    title: 'Check your bag.',
     buttons: [
       { label: 'Found it', kind: 'yes', on: () => { set('had'); next(); } },
       { label: 'Not there', kind: 'no', on: spare },
     ],
   });
-  const spare = () => card({ screen: 'ls-spare',
-    kicker, steps,
-    title: esc(it.spareQ || `Ask your teacher: do they have a spare ${it.name}?`),
-    body: '<p>Walk over quietly and ask. Teachers would rather lend one than have you sit and wait.</p>',
+  const spare = () => card({ screen: 'ls-spare', steps,
+    title: esc(it.spareQ || `Ask your teacher for a spare ${it.name}.`),
     buttons: [
       { label: it.spareYes || 'Got one', kind: 'yes', on: () => { set(it.spareQ ? 'paper' : 'borrowed'); next(); } },
       { label: it.spareNo || 'No spare', kind: 'no', on: partner },
     ],
   });
-  const partner = () => card({ screen: 'ls-partner',
-    kicker, steps,
-    title: `Can you share with your partner?`,
+  const partner = () => card({ screen: 'ls-partner', steps,
+    title: 'Share with your partner?',
     buttons: [
       { label: 'Yes', kind: 'yes', on: () => { set('shared'); next(); } },
       { label: 'No', kind: 'no', on: hand },
     ],
   });
-  const hand = () => card({ screen: 'ls-hand',
-    kicker, steps,
-    title: 'Raise your hand',
-    body: `<p>Let your teacher know you haven't got ${esc(it.your.replace(/^(your|a) /, 'a '))}. That's OK. They'll sort something out.</p>`,
-    buttons: [{ label: 'Done. Next question', kind: 'primary', on: () => { set('none'); next(); } }],
+  const hand = () => card({ screen: 'ls-hand', steps,
+    title: 'Put your hand up.',
+    buttons: [{ label: 'Done', kind: 'primary', on: () => { set('none'); next(); } }],
   });
   ask();
 }
 
 function knowStarter() {
   card({ screen: 'ls-know',
-    kicker: 'Starter task',
-    title: 'Do you know what to do for the starter?',
+    title: 'Do you know what to do?',
     buttons: [
-      { label: 'Yes', kind: 'yes', on: () => ready('Great. Make a start on the starter.') },
+      { label: 'Yes', kind: 'yes', on: home },
       { label: 'No', kind: 'no', on: () => photoStep({ next: (photo) => { S.starterPhoto = photo; analyse(photo, starterCtx()); } }) },
     ],
   });
 }
 
-const starterCtx = () => ({
-  ok: () => ready('Good. Get going on question 1.'),
-  stuckDone: () => ready('Your teacher knows you need help. Copy out the question while you wait.'),
-});
+const starterCtx = () => ({ ok: home, stuckDone: home });
 
-function ready(msg) {
-  const s = subj();
-  const borrowed = s.items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
-  card({ screen: 'ready',
-    kicker: 'Lesson start',
-    title: "You're ready",
-    body: `<p>${esc(msg)}</p>`,
-    note: borrowed.length ? `You borrowed: <b>${esc(borrowed.join(', '))}</b>. Lesson end will remind you to give it back.` : '',
-    noteKind: 'warn',
-    buttons: [
-      { label: 'Back to home', kind: 'primary', on: home },
-      { label: 'Start a task timer', kind: 'ghost', on: taskStart },
-    ],
-  });
-}
-
-/* Photo capture: real camera on a device, or the bundled example. */
 /* Pretend camera: no real picker. The shutter always "captures" the example worksheet. */
-function photoStep({ next, title = 'Take a photo of the starter task', kicker = 'Starter task' }) {
+function photoStep({ next, title = 'Take a photo of the starter.' }) {
   card({ screen: 'photo',
-    kicker,
     title,
     extra: `
       <div class="viewfinder" id="viewfinder">
@@ -326,7 +292,6 @@ function photoStep({ next, title = 'Take a photo of the starter task', kicker = 
         <span class="vf-corners" aria-hidden="true"></span>
         <span class="vf-flash" aria-hidden="true"></span>
       </div>
-      <p class="muted small" style="text-align:center;margin:10px 0 0">Get the whole slide or sheet in the picture.</p>
       <button class="shutter" id="shutter" aria-label="Take photo"></button>`,
     onRender: () => {
       document.getElementById('shutter').onclick = (e) => {
@@ -340,57 +305,46 @@ function photoStep({ next, title = 'Take a photo of the starter task', kicker = 
 
 function analyse(photo, ctx) {
   card({ screen: 'analyse',
-    kicker: 'Reading the task',
-    title: 'Looking at your photo…',
-    extra: `<img class="thumb" src="${photo}" alt="Your photo"><div class="spinner" role="status" aria-label="Working"></div>`,
+    title: 'Reading the task…',
+    extra: '<div class="spinner" role="status" aria-label="Working"></div>',
   });
   setTimeout(() => chunkStep(photo, ctx), 1600);
 }
 
-/* Scripted "AI" response for the example bearings worksheet:
- * notice it is differentiated A/B/C, start with A, show only question 1. */
+/* Scripted "AI" response for the example bearings worksheet: it sees the
+ * A/B/C differentiation and shows only question 1 of A. One instruction. */
 function chunkStep(photo, ctx) {
-  const own = photo !== 'assets/starter.jpg';
   card({ screen: 'chunk',
-    kicker: 'Starter task · one bit at a time',
-    title: 'There are three sets: A, B and C. Start with A.',
+    title: 'Just do this one.',
     img: { src: 'assets/part-a-q1.jpg', alt: 'Section A, question 1: Burlet is on a bearing of 080° from Leighton. Find angle a.', focus: true },
-    body: '<p>Just do <b>question 1</b> for now. Ignore everything else on the sheet.</p>',
-    note: (own ? 'Demo: your photo isn\'t really analysed. This shows what would happen with the example worksheet.<br>' : '')
-      + 'This app won\'t give you answers. It helps you get started.',
     buttons: [
-      { label: 'I can do this', kind: 'yes', on: ctx.ok },
+      { label: 'I can do it', kind: 'yes', on: ctx.ok },
       { label: 'Still stuck', kind: 'no', on: () => ladder(0, ctx) },
     ],
   });
 }
 
-/* Help ladder: brain/notes → friend → teacher */
+/* Help ladder: notes → friend → teacher */
 function ladder(stage, ctx) {
   const top = ctx.top ? ctx.top() : '';
-  if (stage === 0) return card({ screen: 'ladder-0',
-    top, ladder: 0, kicker: 'Getting unstuck',
-    title: 'Look in your notes',
-    body: '<p>Find last lesson\'s work on this topic, or look in your textbook. Is there an example that looks like this?</p>',
+  if (stage === 0) return card({ screen: 'ladder-0', top, ladder: 0,
+    title: 'Look in your notes.',
     buttons: [
       { label: 'That helped', kind: 'yes', on: ctx.ok },
       { label: 'Still stuck', kind: 'no', on: () => ladder(1, ctx) },
     ],
   });
-  if (stage === 1) return card({ screen: 'ladder-1',
-    top, ladder: 1, kicker: 'Getting unstuck',
-    title: 'Ask the person next to you',
-    body: '<p>It\'s fine to talk quietly about this. Can you work out the first step together?</p>',
+  if (stage === 1) return card({ screen: 'ladder-1', top, ladder: 1,
+    title: 'Ask the person next to you.',
     buttons: [
       { label: 'That helped', kind: 'yes', on: ctx.ok },
       { label: 'Still stuck', kind: 'no', on: () => ladder(2, ctx) },
     ],
   });
-  return card({ screen: 'ladder-2',
-    top, ladder: 2, kicker: 'Getting unstuck',
-    title: 'Raise your hand',
-    body: '<p>Your teacher will come to you. While you wait, copy out the question and write down anything you already know.</p>',
-    buttons: [{ label: 'My hand is up', kind: 'primary', on: ctx.stuckDone }],
+  return card({ screen: 'ladder-2', top, ladder: 2,
+    title: 'Put your hand up.',
+    body: '<p>While you wait, copy out the question.</p>',
+    buttons: [{ label: 'Done', kind: 'primary', on: ctx.stuckDone }],
   });
 }
 
@@ -448,15 +402,14 @@ const ringHtml = (compact) => `
 
 /* Check-in overlay: flashes every 25% of the time */
 const CHECK_MSG = {
-  0.25: ['Check-in · 25%', 'Still on task?', 'A quarter of your time has gone. You should be about a quarter of the way through.'],
-  0.5: ['Check-in · 50%', 'Halfway', 'Half your time has gone. You should be about halfway through.'],
-  0.75: ['Check-in · 75%', 'Start finishing off', 'Three quarters of your time has gone. What\'s left to do?'],
-  1: ['Time\'s up', 'Time\'s up', 'Finish the sentence you\'re on, then look up for your teacher.'],
+  0.25: ['Still on task?', '¼ of the time has gone.'],
+  0.5: ['Halfway.', 'Half the time has gone.'],
+  0.75: ['Start finishing off.', '¾ of the time has gone.'],
+  1: ['Time\'s up.', 'Finish your sentence.'],
 };
 function checkIn(p) {
-  const [k, t, b] = CHECK_MSG[p];
+  const [t, b] = CHECK_MSG[p];
   const box = document.getElementById('checkin');
-  document.getElementById('checkinKicker').textContent = k;
   document.getElementById('checkinTitle').textContent = t;
   document.getElementById('checkinBody').textContent = b;
   document.getElementById('checkinBar').style.width = `${p * 100}%`;
@@ -468,7 +421,7 @@ function checkIn(p) {
     btns.firstChild.onclick = () => { close(); stopTimer(); home(); };
   } else {
     btns.className = 'btn-row two';
-    btns.innerHTML = '<button class="btn yes">Yes, on track</button><button class="btn no">I\'m stuck</button>';
+    btns.innerHTML = '<button class="btn yes">Yes</button><button class="btn no">I\'m stuck</button>';
     btns.children[0].onclick = close;
     btns.children[1].onclick = () => { close(); ladder(0, taskCtx()); };
   }
@@ -488,18 +441,16 @@ function taskStart() {
   S.task = {};
   let secs = 0;
   card({ screen: 'ts-set',
-    kicker: 'Task start',
-    title: 'How long did your teacher give you?',
+    title: 'How many minutes?',
     extra: `
       <div class="timer-set">
         <div class="big-time" id="setTime" aria-live="polite">0:00</div>
         <div class="add-btns">
           ${[1, 2, 5, 10].map((m) => `<button class="btn no" data-add="${m}">+${m}</button>`).join('')}
         </div>
-        <p class="muted small" style="margin-top:10px">Minutes. Tap more than once to add more: 5 + 2 = 7 minutes.</p>
       </div>`,
     buttons: [
-      { label: 'Start timer', kind: 'primary', disabled: true, on: () => { startTimer(secs); whereStep(); } },
+      { label: 'Start', kind: 'primary', disabled: true, on: () => { startTimer(secs); whereStep(); } },
       { label: 'Clear', kind: 'ghost', on: () => { secs = 0; refresh(); } },
     ],
     onRender: () => {
@@ -519,15 +470,15 @@ const taskCtx = () => ({ top: taskTop, ok: focusView, stuckDone: focusView });
 
 function whereStep() {
   card({ screen: 'ts-where',
-    top: taskTop(), kicker: 'Task start', steps: { i: 0, n: 4 },
+    top: taskTop(), steps: { i: 0, n: 4 },
     title: 'Where is the task?',
     buttons: [
-      { label: 'On paper or the board', kind: 'no', on: () => photoStep({
-        kicker: 'Task start', title: 'Take a photo of the task',
+      { label: 'Paper or board', kind: 'no', on: () => photoStep({
+        title: 'Take a photo of the task.',
         next: (photo) => { S.task.where = 'On paper'; S.task.photo = photo; whoStep(); },
       }) },
       { label: 'Google Classroom', kind: 'no', on: classroomStep },
-      { label: 'The teacher said it', kind: 'no', on: spokenStep },
+      { label: 'Teacher said it', kind: 'no', on: spokenStep },
     ],
   });
 }
@@ -535,28 +486,24 @@ function whereStep() {
 function classroomStep() {
   const tasks = ['Bearings: practice questions', '3D Pythagoras worksheet', 'Angles in polygons: revision'];
   card({ screen: 'ts-classroom',
-    top: taskTop(), kicker: 'Google Classroom', steps: { i: 0, n: 4 },
-    title: 'Which assignment is it?',
-    body: '<p class="muted small">Demo: in the real app this list comes from Google Classroom.</p>',
+    top: taskTop(), steps: { i: 0, n: 4 },
+    title: 'Which one?',
     buttons: tasks.map((t) => ({ label: t, kind: 'no', on: () => { S.task.where = `Classroom: ${t}`; whoStep(); } })),
   });
 }
 
 function spokenStep() {
   card({ screen: 'ts-spoken',
-    top: taskTop(), kicker: 'Task start', steps: { i: 0, n: 4 },
-    title: 'Say what you think the task is',
+    top: taskTop(), steps: { i: 0, n: 4 },
+    title: 'Say the task.',
     extra: `<button class="mic" id="mic" aria-label="Start recording">${icon('mic')}</button>
-            <p class="muted small" id="micHint" style="text-align:center">Tap and speak quietly.</p>
             <div id="micOut"></div>`,
     onRender: () => {
       const mic = document.getElementById('mic');
       mic.onclick = () => {
         mic.classList.add('rec'); mic.disabled = true;
-        document.getElementById('micHint').textContent = 'Listening…';
         setTimeout(() => {
           mic.classList.remove('rec');
-          document.getElementById('micHint').textContent = 'Demo: scripted transcript';
           const said = 'Do questions 1 to 8 on bearings, then check with your partner.';
           document.getElementById('micOut').innerHTML = `<p class="quote">“${said}”</p>
             <div class="btn-row two"><button class="btn yes" id="sayYes">That's right</button><button class="btn no" id="sayNo">Try again</button></div>`;
@@ -571,21 +518,20 @@ function spokenStep() {
 function whoStep() {
   const pick = (v) => () => { S.task.who = v; assessStep(); };
   card({ screen: 'ts-who',
-    top: taskTop(), kicker: 'Task start', steps: { i: 1, n: 4 },
+    top: taskTop(), steps: { i: 1, n: 4 },
     title: 'Who are you working with?',
     buttons: [
       { label: 'On my own', kind: 'no', on: pick('On my own') },
-      { label: 'With a partner', kind: 'no', on: pick('With a partner') },
-      { label: 'In a group', kind: 'no', on: pick('In a group') },
+      { label: 'Partner', kind: 'no', on: pick('Partner') },
+      { label: 'Group', kind: 'no', on: pick('Group') },
     ],
   });
 }
 
 function assessStep() {
   card({ screen: 'ts-assess',
-    top: taskTop(), kicker: 'Task start', steps: { i: 2, n: 4 },
-    title: 'Is this an assessment?',
-    body: '<p class="muted small">For example a quick knowledge check or a test.</p>',
+    top: taskTop(), steps: { i: 2, n: 4 },
+    title: 'Is it a test?',
     buttons: [
       { label: 'Yes', kind: 'yes', on: () => { S.task.assessment = true; knowTask(); } },
       { label: 'No', kind: 'no', on: () => { S.task.assessment = false; knowTask(); } },
@@ -595,8 +541,8 @@ function assessStep() {
 
 function knowTask() {
   card({ screen: 'ts-know',
-    top: taskTop(), kicker: 'Task start', steps: { i: 3, n: 4 },
-    title: 'Do you know what to do first?',
+    top: taskTop(), steps: { i: 3, n: 4 },
+    title: 'Do you know what to do?',
     buttons: [
       { label: 'Yes', kind: 'yes', on: focusView },
       { label: 'No', kind: 'no', on: () => (S.task.photo ? analyse(S.task.photo, taskCtx()) : ladder(0, taskCtx())) },
@@ -606,26 +552,19 @@ function knowTask() {
 
 function focusView() {
   if (!T.total) return taskStart();
-  const t = S.task || {};
-  const chips = [t.where, t.who, t.assessment ? 'Assessment' : ''].filter(Boolean)
-    .map((c) => `<span class="pill">${esc(c)}</span>`).join('');
   card({ screen: 'ts-focus',
-    top: ringHtml(false), kicker: 'Working',
-    title: 'Keep going. I\'ll check in with you.',
-    body: `${chips ? `<div class="status-row" style="margin:0 0 6px">${chips}</div>` : ''}
-           ${t.said ? `<p class="quote">“${esc(t.said)}”</p>` : ''}
-           <p class="muted small">You'll get a check-in every quarter of the time.</p>`,
+    top: ringHtml(false),
+    title: 'Keep going.',
     buttons: [
       { label: 'I\'m stuck', kind: 'accent', on: () => ladder(0, taskCtx()) },
-      { label: 'I\'ve finished', kind: 'yes', on: () => {
+      { label: 'Finished', kind: 'yes', on: () => {
         stopTimer();
         card({ screen: 'ts-done',
-          kicker: 'Task done', title: 'Nice work.',
-          body: '<p>Check your work, then look up for what\'s next.</p>',
-          buttons: [{ label: 'Back to home', kind: 'primary', on: home }],
+          title: 'Check your work.',
+          buttons: [{ label: 'Done', kind: 'primary', on: home }],
         });
       } },
-      { label: 'Home (the timer keeps going)', kind: 'ghost', on: home },
+      { label: 'Home', kind: 'ghost', on: home },
     ],
     stack: true,
   });
@@ -639,23 +578,20 @@ function lessonEnd() {
   const rows = [];
   for (const it of s.items) {
     const st = S.equip[it.id];
-    if (st === 'borrowed') rows.push({ label: `Give back the ${it.name} you borrowed`, sub: 'Return it to your teacher', borrowed: true });
-    else if (st === 'paper') rows.push({ label: 'The paper you were given', sub: `Stick it in your ${it.name} at home` });
-    else if (st === 'shared') rows.push({ label: `Your partner's ${it.name}`, sub: 'Give it back if you have it' });
+    if (st === 'borrowed') rows.push({ label: `Give the ${it.name} back to your teacher`, borrowed: true });
+    else if (st === 'paper') rows.push({ label: 'Paper from your teacher' });
+    else if (st === 'shared') rows.push({ label: `Give your partner their ${it.name}` });
     else if (st === 'had' || !S.started) rows.push({ label: `Your ${it.name}` });
   }
-  rows.push({ label: 'Pencil case and bag' });
-  rows.push({ label: 'Anything you left outside the room?', sub: 'Bag, coat, PE kit, instrument' });
+  rows.push({ label: 'Pencil case' });
+  rows.push({ label: 'Anything outside the room' });
 
   card({ screen: 'le-pack',
-    kicker: 'Lesson end',
-    title: 'Pack up',
-    body: '<p>Tap each one when it\'s in your bag.</p>',
-    note: S.started ? '' : `You didn't do Lesson start, so this is the usual list for ${esc(s.name)}.`,
+    title: 'Pack up.',
     extra: `<ul class="checklist">${rows.map((r, i) => `
       <li><button class="check ${r.borrowed ? 'borrowed' : ''}" data-check="${i}" aria-pressed="false">
         <span class="box">${icon('tick')}</span>
-        <span>${esc(r.label)}${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</span>
+        <span>${esc(r.label)}</span>
       </button></li>`).join('')}</ul>`,
     buttons: [{ label: 'Next', kind: 'primary', on: homeworkStep }],
     onRender: () => {
@@ -671,14 +607,12 @@ function lessonEnd() {
 
 function homeworkStep() {
   card({ screen: 'le-hw',
-    kicker: 'Lesson end',
-    title: 'Did your teacher set homework?',
+    title: 'Any homework?',
     buttons: [
       { label: 'Yes', kind: 'yes', on: homeworkForm },
       { label: 'No', kind: 'no', on: endDone },
       { label: 'Not sure', kind: 'ghost', on: () => card({ screen: 'le-unsure',
-        kicker: 'Lesson end', title: 'Check before you go',
-        body: '<p>Look on Google Classroom tonight, or ask your teacher on your way out.</p>',
+        title: 'Ask your teacher on the way out.',
         buttons: [{ label: 'OK', kind: 'primary', on: endDone }],
       }) },
     ],
@@ -690,18 +624,16 @@ function homeworkForm() {
   let due = null;
   const opts = [['Tomorrow', 1], ['Next lesson', 2], ['In a week', 7]];
   card({ screen: 'le-hwform',
-    kicker: 'Homework',
-    title: 'What is it?',
+    title: 'What\'s the homework?',
     extra: `
-      <label class="field"><span>The homework</span>
-        <textarea id="hwText" placeholder="e.g. Finish questions 4 to 8"></textarea></label>
+      <label class="field"><textarea id="hwText" aria-label="The homework" placeholder="e.g. Questions 4 to 8"></textarea></label>
       <div class="field"><span>When is it due?</span>
         <div class="chips">${opts.map(([l, d]) => `<button class="chip" data-due="${d}">${l}</button>`).join('')}</div></div>`,
     buttons: [{ label: 'Save', kind: 'primary', disabled: true, on: () => {
       S.items.push({ id: 'h' + Date.now(), kind: 'homework', subject: subj().name,
         title: document.getElementById('hwText').value.trim(), due: addDays(due) });
       save();
-      endDone('Saved to your Assessments list.');
+      endDone();
     } }],
     onRender: () => {
       const txt = document.getElementById('hwText');
@@ -718,15 +650,11 @@ function homeworkForm() {
   });
 }
 
-function endDone(extra) {
+function endDone() {
   const borrowed = subj().items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
   card({ screen: 'le-done',
-    kicker: 'Lesson end',
-    title: 'All packed. See you next lesson.',
-    body: typeof extra === 'string' ? `<p>${esc(extra)}</p>` : '',
-    note: borrowed.length ? `Last reminder: give back the <b>${esc(borrowed.join(', '))}</b>.` : '',
-    noteKind: 'warn',
-    buttons: [{ label: 'Finish lesson', kind: 'primary', on: () => {
+    title: borrowed.length ? `Give the ${esc(borrowed.join(' and '))} back.` : 'All packed.',
+    buttons: [{ label: 'Done', kind: 'primary', on: () => {
       S.equip = {}; S.started = false; S.task = {}; save(); home();
     } }],
   });
@@ -744,7 +672,6 @@ const itemTitle = (a) => (a.kind === 'homework' ? `${a.subject} homework` : `${a
 function assessments() {
   const list = [...S.items].sort((a, b) => new Date(a.due) - new Date(b.due));
   card({ screen: 'as-list',
-    kicker: 'Assessments',
     title: 'Coming up',
     extra: list.length ? `<ul class="list">${list.map((a) => `
       <li><button class="item" data-item="${a.id}">
@@ -767,12 +694,11 @@ function assessments() {
 
 function homeworkView(a) {
   card({ screen: 'as-hw',
-    kicker: `Homework · ${dueText(a.due)}`,
     title: esc(itemTitle(a)),
-    body: `<p class="quote">${esc(a.title)}</p><p class="muted">Due ${dateText(a.due)}</p>`,
+    body: `<p class="muted">${dueText(a.due)} · ${dateText(a.due)}</p><p class="quote">${esc(a.title)}</p>`,
     buttons: [
       { label: 'Mark as done', kind: 'yes', on: () => { S.items = S.items.filter((x) => x !== a); save(); assessments(); } },
-      { label: 'Back to list', kind: 'ghost', on: assessments },
+      { label: 'Back', kind: 'ghost', on: assessments },
     ],
   });
 }
@@ -783,14 +709,12 @@ function addAssessment() {
   const whens = [['In 1 week', 7], ['In 2 weeks', 14], ['In 3 weeks', 21]];
   const chips = (key, opts) => `<div class="chips">${opts.map(([l, v]) => `<button class="chip" data-k="${key}" data-v="${v}">${l}</button>`).join('')}</div>`;
   card({ screen: 'as-add',
-    kicker: 'Assessments',
     title: 'Add a test',
-    body: '<p class="muted small">Fill this in when your teacher tells the class about it.</p>',
     extra: `
       <div class="field"><span>Subject</span>${chips('subject', subjects.map((s) => [s, s]))}</div>
       <div class="field"><span>What kind?</span>${chips('type', Object.entries(TYPES).map(([k, v]) => [v, k]))}</div>
       <div class="field"><span>When?</span>${chips('days', whens)}</div>
-      <label class="field"><span>What did the teacher say it covers?</span>
+      <label class="field"><span>Topics (if you know them)</span>
         <textarea id="topics" placeholder="e.g. Units D1 and D2"></textarea></label>`,
     buttons: [{ label: 'Make my plan', kind: 'primary', disabled: true, on: () => {
       const a = { id: 'a' + Date.now(), kind: 'assessment', subject: draft.subject, type: draft.type,
@@ -848,27 +772,24 @@ function planView(a) {
   const rows = offs.map((o, k) => `<li><b>${dateText(addDays(o))}</b><span>${esc(tasks[k])} <span class="muted small">· 20 min</span></span></li>`).join('');
 
   card({ screen: 'as-plan',
-    kicker: `${esc(itemTitle(a))} · ${dueText(a.due)}`,
-    title: 'Your revision plan',
-    body: a.topics ? `<p class="muted">Covers: ${esc(a.topics)}</p>` : '',
+    title: esc(itemTitle(a)),
+    body: `<p class="muted">${dueText(a.due)}${a.topics ? ` · ${esc(a.topics)}` : ''}</p>`,
     extra: `
       <div class="strategy"><span class="strategy-icon" aria-hidden="true">${st.icon}</span>
-        <div><p class="kicker" style="margin-bottom:2px">Best way to revise this</p>
-          <h3>${st.name}</h3><p class="small" style="margin:0">${st.why}</p></div></div>
-      <ol class="plan">${rows}<li class="test"><b>${dateText(a.due)}</b><span><b>Test day.</b> Bring a pen and get there on time.</span></li></ol>`,
+        <div><p class="kicker" style="margin-bottom:2px">Revise with</p><h3 style="margin:0">${st.name}</h3></div></div>
+      <ol class="plan">${rows}<li class="test"><b>${dateText(a.due)}</b><span><b>Test day</b></span></li></ol>`,
     buttons: [
-      { label: 'Show me what good looks like', kind: 'accent', on: () => exampleView(a, st) },
-      { label: 'Back to list', kind: 'ghost', on: assessments },
+      { label: 'Show me an example', kind: 'accent', on: () => exampleView(a, st) },
+      { label: 'Back', kind: 'ghost', on: assessments },
     ],
     stack: true,
   });
 }
 
 function exampleView(a, st) {
-  const back = [{ label: 'Back to my plan', kind: 'primary', on: () => planView(a) }];
+  const back = [{ label: 'Back', kind: 'primary', on: () => planView(a) }];
   const ex = {
     practice: `<div class="example"><h3>A mistakes log</h3>
-      <p class="small">Every time you get a question wrong, write one line:</p>
       <ul><li><b>Question:</b> Bearing of A from B, when B from A is 060°</li>
       <li><b>What went wrong:</b> I took away 180° instead of adding</li>
       <li><b>Next time:</b> Draw the north line at B first</li></ul></div>`,
@@ -884,7 +805,7 @@ function exampleView(a, st) {
       <li>Add the solid and stir</li><li>Record the highest temperature reached</li></ol></div>`,
   };
   if (st.ex !== 'flash') {
-    return card({ screen: 'as-example', kicker: `Example · ${st.name}`, title: 'What a good one looks like', extra: ex[st.ex], buttons: back });
+    return card({ screen: 'as-example', title: `${st.name}: an example`, extra: ex[st.ex], buttons: back });
   }
   const decks = {
     Spanish: [['el pan', 'bread'], ['las patatas', 'potatoes'], ['el desayuno', 'breakfast']],
@@ -893,11 +814,9 @@ function exampleView(a, st) {
   const deck = decks[a.subject] || decks.default;
   let i = 0;
   card({ screen: 'as-example',
-    kicker: 'Example · Flashcards',
-    title: 'Tap the card to flip it',
+    title: 'Say the answer, then tap to flip.',
     extra: `<div class="flash-wrap"><button class="flash" id="flash" aria-label="Flashcard. Tap to flip."></button></div>
-            <p class="muted small" id="flashCount" style="text-align:center"></p>
-            <p class="small">Word on the front, meaning on the back. Say the answer <b>before</b> you flip.</p>`,
+            <p class="muted small" id="flashCount" style="text-align:center"></p>`,
     buttons: [{ label: 'Next card', kind: 'no', on: () => { i = (i + 1) % deck.length; draw(); } }, ...back],
     stack: true,
     onRender: () => { document.getElementById('flash').onclick = (e) => e.currentTarget.classList.toggle('flipped'); draw(); },
