@@ -104,8 +104,8 @@ p { margin: 0 0 1em; }
 .small { font-size: .9rem; }
 
 /* ---------- Home ---------- */
-.home-head { margin-bottom: 18px; }
-.home-head h1 { margin-bottom: 4px; }
+.home-status { margin: 0 0 16px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .status-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .pill {
   display: inline-flex; align-items: center; gap: 6px;
@@ -351,8 +351,10 @@ button:focus-visible, .btn:focus-within, a:focus-visible, input:focus-visible, s
 /* Landscape tablet: use the width */
 @media (min-width: 1000px) {
   .view { max-width: 1000px; }
-  .tiles { gap: 20px; }
-  .tile { min-height: 215px; padding: 22px; }
+  .tiles { gap: 20px; grid-auto-rows: minmax(215px, calc((100dvh - 200px) / 2)); }
+  .tile { min-height: 215px; padding: 26px; }
+  .tile-icon { width: 64px; height: 64px; }
+  .tile-icon svg { width: 36px; height: 36px; }
   .tile-title { font-size: 1.45rem; }
   .card { max-width: 820px; margin: 0 auto; }
 }
@@ -367,3 +369,35 @@ button:focus-visible, .btn:focus-within, a:focus-visible, input:focus-visible, s
 
 /* Inside the presenter page the panel provides demo info and settings */
 .embedded .foot { display: none; }
+
+/* ---------- Pretend camera ---------- */
+.viewfinder {
+  position: relative; overflow: hidden;
+  height: min(48vh, 400px);
+  border-radius: 16px; background: #15191E;
+  display: grid; place-items: center;
+}
+.viewfinder img {
+  position: absolute; inset: 6%; width: 88%; height: 88%; object-fit: contain;
+  transform: rotate(-1.5deg);
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.6)) brightness(.96);
+}
+.vf-corners {
+  position: absolute; inset: 14px; pointer-events: none;
+  background:
+    linear-gradient(#fff,#fff) top left / 34px 4px, linear-gradient(#fff,#fff) top left / 4px 34px,
+    linear-gradient(#fff,#fff) top right / 34px 4px, linear-gradient(#fff,#fff) top right / 4px 34px,
+    linear-gradient(#fff,#fff) bottom left / 34px 4px, linear-gradient(#fff,#fff) bottom left / 4px 34px,
+    linear-gradient(#fff,#fff) bottom right / 34px 4px, linear-gradient(#fff,#fff) bottom right / 4px 34px;
+  background-repeat: no-repeat; opacity: .9;
+}
+.vf-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.viewfinder.snap .vf-flash { animation: snap .45s ease-out; }
+@keyframes snap { 0% { opacity: .95; } 100% { opacity: 0; } }
+.shutter {
+  display: block; margin: 14px auto 0;
+  width: 76px; height: 76px; border-radius: 50%;
+  background: #fff; border: 6px solid var(--blue);
+  box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--line);
+}
+.shutter:active { transform: scale(.94); }

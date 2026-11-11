@@ -43,8 +43,8 @@ const NOTES = {
   },
   'photo': {
     title: 'Take a photo of the task',
-    body: 'In the real app the photo goes to an AI along with the student\'s needs. For the demo, use the example bearings worksheet.',
-    try: 'Tap Use the example worksheet.',
+    body: 'In the real app this is the iPad camera, and the photo goes to an AI along with the student\'s needs. In the demo the camera is pretend: it always captures the example bearings worksheet.',
+    try: 'Tap the shutter button.',
   },
   'analyse': {
     title: 'Reading the task',
@@ -263,16 +263,40 @@ $('ctlHome').onclick = () => send('home');
 $('ctlReset').onclick = () => send('reset');
 
 /* ---------- Fit the iPad to the space ---------- */
-const SCREEN_W = 1180, SCREEN_H = 820, BEZEL = 26;
+const SCREEN_W = 1180, SCREEN_H = 820, BEZEL = 24, PANEL_W = 340, GAP = 56, PAD = 24;
+let k = 0.6;
 function fit() {
-  const col = document.querySelector('.device-col');
-  const top = col.getBoundingClientRect().top;
-  const availW = col.clientWidth;
   const wide = window.innerWidth > 1100;
-  const availH = wide ? window.innerHeight - Math.max(top, 0) - 70 : Infinity;
-  const k = Math.max(0.2, Math.min(availW / (SCREEN_W + 2 * BEZEL), availH / (SCREEN_H + 2 * BEZEL), 1));
+  const availW = wide ? window.innerWidth - 2 * PAD - GAP - PANEL_W : window.innerWidth - 32;
+  const availH = wide ? window.innerHeight - 2 * PAD : Infinity;
+  k = Math.max(0.2, Math.min(availW / (SCREEN_W + 2 * BEZEL), availH / (SCREEN_H + 2 * BEZEL), 1.1));
   document.documentElement.style.setProperty('--k', k.toFixed(4));
+  placeHand();
 }
+
+/* ---------- Pointing hand: shows where to tap first ---------- */
+const hand = $('hand');
+let handOn = true;
+function placeHand() {
+  if (!handOn) { hand.hidden = true; return; }
+  let el = null;
+  try { el = frame.contentDocument.querySelector('[data-go="start"]'); } catch (e) { /* cross-origin */ }
+  if (!el) return;
+  const r = el.getBoundingClientRect();           // in app (unscaled) pixels
+  const x = r.left + r.width * 0.42, y = r.top + r.height * 0.62;
+  hand.style.left = `${(BEZEL + x) * k}px`;
+  hand.style.top = `${(BEZEL + y) * k}px`;
+  hand.hidden = false;
+}
+function hideHand() { handOn = false; hand.hidden = true; }
+window.addEventListener('message', (e) => {
+  if (e.source !== frame.contentWindow || !e.data || e.data.source !== 'ontrack' || e.data.type !== 'screen') return;
+  if (e.data.screen === 'home') { if (handOn) requestAnimationFrame(placeHand); }
+  else hideHand();
+});
+$('ctlReset').addEventListener('click', () => { handOn = true; setTimeout(placeHand, 60); });
+frame.addEventListener('load', () => { setTimeout(placeHand, 60); setTimeout(placeHand, 800); });
+
 window.addEventListener('resize', fit);
 fit();
 showScreen('home');

@@ -167,7 +167,7 @@ function home() {
   const s = subj();
   const borrowed = s.items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
   const pills = [
-    S.started ? '<span class="pill ok">✓ Ready for lesson</span>' : '<span class="pill">Equipment not checked yet</span>',
+    S.started ? '<span class="pill ok">✓ Ready for lesson</span>' : '',
     borrowed.length ? `<span class="pill warn">Borrowed: ${esc(borrowed.join(', '))}</span>` : '',
     T.total && !T.done ? '<span class="pill ok">Task timer running</span>' : '',
   ].join('');
@@ -179,11 +179,8 @@ function home() {
      </button>`;
 
   render(`
-    <div class="home-head">
-      <p class="kicker">${esc(s.name)} · ${esc(s.period)}</p>
-      <h1>What do you need right now?</h1>
-      <div class="status-row">${pills}</div>
-    </div>
+    ${pills ? `<div class="status-row home-status">${pills}</div>` : ''}
+    <h1 class="sr-only">On Track</h1>
     <div class="tiles">
       ${tile('start', 'teal', 'start', 'Lesson start', 'Check you\'re ready')}
       ${tile('task', 'yellow', 'task', 'Task start', 'Timer and getting going')}
@@ -317,16 +314,26 @@ function ready(msg) {
 }
 
 /* Photo capture: real camera on a device, or the bundled example. */
+/* Pretend camera: no real picker. The shutter always "captures" the example worksheet. */
 function photoStep({ next, title = 'Take a photo of the starter task', kicker = 'Starter task' }) {
   card({ screen: 'photo',
     kicker,
     title,
-    body: '<p>Get the whole slide or sheet in the picture.</p>',
-    buttons: [
-      { label: 'Take photo', kind: 'primary', file: true, on: (f) => next(URL.createObjectURL(f)) },
-      { label: 'Use the example worksheet', kind: 'ghost', on: () => next('assets/starter.jpg') },
-    ],
-    stack: true,
+    extra: `
+      <div class="viewfinder" id="viewfinder">
+        <img src="assets/starter.jpg" alt="Camera view of the starter worksheet">
+        <span class="vf-corners" aria-hidden="true"></span>
+        <span class="vf-flash" aria-hidden="true"></span>
+      </div>
+      <p class="muted small" style="text-align:center;margin:10px 0 0">Get the whole slide or sheet in the picture.</p>
+      <button class="shutter" id="shutter" aria-label="Take photo"></button>`,
+    onRender: () => {
+      document.getElementById('shutter').onclick = (e) => {
+        e.currentTarget.disabled = true;
+        document.getElementById('viewfinder').classList.add('snap');
+        setTimeout(() => next('assets/starter.jpg'), 450);
+      };
+    },
   });
 }
 

@@ -1,26 +1,24 @@
-/* Presenter page: the iPad holds the app; everything else is demo info. */
+/* Presenter page. Everything outside the iPad is warm grey with one muted
+ * accent, so the app's own colours are the only strong colour on screen. */
 :root {
-  --teal: #30CDD7;
-  --teal-light: #9BD3DD;
-  --stone: #D7D2CB;
-  --taupe: #A59C94;
-  --navy: #003057;
-  --blue: #26567D;
-  --yellow: #FFCB00;
+  --bg: #2B2927;
+  --bg-2: #353230;
+  --box: rgba(255, 255, 255, .045);
+  --box-line: rgba(215, 210, 203, .16);
+  --text: #D7D2CB;           /* palette stone */
+  --text-muted: #A59C94;     /* palette taupe */
+  --text-strong: #F3F0EC;
+  --card: #EFEBE6;
+  --ink: #2B2927;
+  --ink-muted: #5E5751;
+  --accent: #8FC3C9;         /* muted teal */
+  --accent-soft: rgba(143, 195, 201, .16);
 
-  --stage: #003057;
-  --stage-2: #0A3D66;
-  --card: #FFFFFF;
-  --ink: #003057;
-  --ink-muted: #4F6375;
-  --on-stage: #FFFFFF;
-  --on-stage-muted: #9BD3DD;
-
-  /* iPad (landscape, 11") logical screen size */
   --screen-w: 1180;
   --screen-h: 820;
-  --bezel: 26;
-  --k: .6; /* scale, set by demo.js */
+  --bezel: 24;
+  --k: .6;                   /* set by demo.js */
+  --gap: 56px;
   --font: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -29,37 +27,21 @@ html, body { margin: 0; }
 body {
   min-height: 100dvh;
   font-family: var(--font);
-  background: radial-gradient(1200px 700px at 30% 40%, var(--stage-2), var(--stage));
-  color: var(--on-stage);
+  background: radial-gradient(1100px 800px at 35% 45%, var(--bg-2), var(--bg));
+  color: var(--text);
   line-height: 1.45;
 }
 button, select { font: inherit; }
 
-/* ---------- Top bar ---------- */
-.bar {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  padding: 14px 28px;
-  border-bottom: 1px solid rgba(155, 211, 221, .2);
-}
-.bar-title { display: flex; align-items: center; gap: 12px; }
-.bar-title img { border-radius: 8px; }
-.bar-title strong { display: block; font-size: 1.15rem; }
-.bar-title span { font-size: .85rem; color: var(--on-stage-muted); }
-.bar-link {
-  color: var(--navy); background: var(--yellow); text-decoration: none; font-weight: 700;
-  padding: 8px 16px; border-radius: 999px; font-size: .9rem;
-}
-.bar-link:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
-
-/* ---------- Stage layout ---------- */
+/* ---------- Layout ---------- */
 .stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
-  gap: 64px;
+  grid-template-columns: auto minmax(280px, 340px);
+  justify-content: center;
+  gap: var(--gap);
   align-items: start;
-  padding: 32px 28px 40px;
-  max-width: 1720px;
-  margin: 0 auto;
+  padding: 24px;
+  min-height: 100dvh;
 }
 
 /* ---------- iPad ---------- */
@@ -69,20 +51,18 @@ button, select { font: inherit; }
   width: calc((var(--screen-w) + 2 * var(--bezel)) * var(--k) * 1px);
   height: calc((var(--screen-h) + 2 * var(--bezel)) * var(--k) * 1px);
   padding: calc(var(--bezel) * var(--k) * 1px);
-  background: #11161C;
-  border-radius: calc(46 * var(--k) * 1px);
-  box-shadow:
-    0 0 0 calc(2 * var(--k) * 1px) #3A4450,
-    0 30px 80px rgba(0, 0, 0, .45);
+  background: #0E0F11;
+  border-radius: calc(44 * var(--k) * 1px);
+  box-shadow: 0 0 0 2px #4A4644, 0 30px 80px rgba(0, 0, 0, .5);
 }
 .ipad-cam {
   position: absolute; left: calc(var(--bezel) * var(--k) * .5px - 3px); top: 50%;
-  width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #2A323C;
+  width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #26282B;
 }
 .ipad-screen {
   width: calc(var(--screen-w) * var(--k) * 1px);
   height: calc(var(--screen-h) * var(--k) * 1px);
-  border-radius: calc(22 * var(--k) * 1px);
+  border-radius: calc(20 * var(--k) * 1px);
   overflow: hidden;
   background: #F5F3F0;
 }
@@ -93,85 +73,118 @@ button, select { font: inherit; }
   transform: scale(var(--k));
   transform-origin: 0 0;
 }
-.device-caption { margin: 16px 0 0; font-size: .9rem; color: var(--on-stage-muted); }
 
-/* ---------- Panel ---------- */
-.panel { display: grid; gap: 18px; min-width: 0; }
-.panel-label {
-  margin: 0 0 10px; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--on-stage-muted);
+/* ---------- Pointing hand (first-run hint) ---------- */
+.hand {
+  position: absolute; z-index: 2; pointer-events: none;
+  width: 64px; height: 64px;
+  /* fingertip sits at (8, 2) of the 24-unit icon */
+  margin: -5px 0 0 -21px;
+  animation: hand-in .5s ease both;
+}
+.hand svg { display: block; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .35)); animation: tap 1.6s ease-in-out .5s infinite; }
+.hand-ripple {
+  position: absolute; left: 21px; top: 5px; width: 0; height: 0;
+}
+.hand-ripple::before {
+  content: ""; position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .9); box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
+  opacity: 0; animation: ripple 1.6s ease-out .5s infinite;
+}
+@keyframes hand-in { from { opacity: 0; transform: translate(30px, 40px); } }
+@keyframes tap {
+  0%, 100% { transform: translate(0, 14px); }
+  40% { transform: translate(0, 0) scale(.96); }
+  55% { transform: translate(0, 2px); }
+}
+@keyframes ripple {
+  0%, 35% { opacity: 0; transform: scale(.4); }
+  45% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5); }
 }
 
-/* The callout points back at the iPad */
+/* ---------- Panel ---------- */
+.panel { display: grid; gap: 16px; min-width: 0; padding-top: 40px; }
+.panel-label {
+  margin: 0 0 10px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .callout {
   position: relative;
   background: var(--card); color: var(--ink);
-  border-radius: 16px; padding: 22px 22px 20px;
-  border-left: 6px solid var(--teal);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
+  border-radius: 14px; padding: 20px 20px 18px;
+  border-left: 5px solid var(--accent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
 }
-.callout::before {          /* connector line into the gap */
-  content: ""; position: absolute; top: 34px; left: -70px; width: 64px; height: 2px;
-  background: var(--teal);
+.callout::before {
+  content: ""; position: absolute; top: 32px; right: 100%; width: calc(var(--gap) - 4px); height: 2px;
+  background: var(--accent);
 }
-.callout::after {           /* dot at the iPad end */
-  content: ""; position: absolute; top: 29px; left: -76px; width: 12px; height: 12px; border-radius: 50%;
-  background: var(--teal); box-shadow: 0 0 0 5px rgba(48, 205, 215, .25);
+.callout::after {
+  content: ""; position: absolute; top: 27px; right: calc(100% + var(--gap) - 10px); width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft);
 }
 .callout.changed { animation: pop .35s ease; }
 @keyframes pop { from { opacity: .3; transform: translateX(8px); } }
 .callout-kicker {
-  margin: 0 0 6px; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue);
+  margin: 0 0 6px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted);
 }
-.callout h2 { margin: 0 0 10px; font-size: 1.35rem; line-height: 1.2; }
-.callout p { margin: 0 0 10px; }
+.callout h2 { margin: 0 0 8px; font-size: 1.25rem; line-height: 1.2; }
+.callout p { margin: 0 0 8px; font-size: .97rem; }
 .callout p:last-child { margin-bottom: 0; }
 .callout-try {
-  margin-top: 14px !important; padding: 10px 12px; border-radius: 10px;
-  background: #FFF5CC; font-size: .95rem;
+  margin-top: 12px !important; padding: 9px 12px; border-radius: 9px;
+  background: #E0DAD3; font-size: .92rem !important;
 }
 
-.flow ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; counter-reset: s; }
+.flow ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
 .flow li {
   counter-increment: s;
   display: flex; align-items: center; gap: 10px;
-  padding: 6px 10px; border-radius: 8px; font-size: .92rem; color: var(--on-stage-muted);
+  padding: 3px 10px; border-radius: 8px; font-size: .88rem; color: var(--text-muted);
 }
 .flow li::before {
-  content: counter(s); flex: none; width: 22px; height: 22px; border-radius: 50%;
-  display: grid; place-items: center; font-size: .75rem; font-weight: 700;
+  content: counter(s); flex: none; width: 21px; height: 21px; border-radius: 50%;
+  display: grid; place-items: center; font-size: .72rem; font-weight: 700;
   border: 1.5px solid currentColor;
 }
-.flow li.done { color: rgba(255, 255, 255, .55); }
-.flow li.on { background: rgba(48, 205, 215, .16); color: #fff; font-weight: 700; }
-.flow li.on::before { background: var(--teal); border-color: var(--teal); color: var(--navy); }
+.flow li.done { color: #7C746D; }
+.flow li.on { background: var(--accent-soft); color: var(--text-strong); font-weight: 700; }
+.flow li.on::before { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 
-.controls, .out {
-  background: rgba(255, 255, 255, .06); border: 1px solid rgba(155, 211, 221, .22);
-  border-radius: 16px; padding: 18px;
-}
-.controls label { display: grid; gap: 6px; margin-bottom: 14px; font-weight: 700; font-size: .95rem; }
-.controls small { font-weight: 400; color: var(--on-stage-muted); font-size: .8rem; }
+.box { background: var(--box); border: 1px solid var(--box-line); border-radius: 14px; padding: 16px; }
+.controls label { display: block;  margin-bottom: 12px; font-weight: 700; font-size: .92rem; color: var(--text-strong); }
+.controls small { font-weight: 400; color: var(--text-muted); font-size: .78rem; margin-left: 4px; }
 .controls select {
-  padding: 10px 12px; border-radius: 10px; border: 0; background: #fff; color: var(--ink);
+  display: block; width: 100%; margin-top: 6px; padding: 9px 12px; border-radius: 9px; border: 0; background: var(--card); color: var(--ink);
 }
 .ctl-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ctl-btns button {
-  padding: 10px; border-radius: 10px; border: 1.5px solid var(--teal-light);
-  background: transparent; color: #fff; font-weight: 700; cursor: pointer;
+  padding: 9px; border-radius: 9px; border: 1.5px solid var(--box-line);
+  background: transparent; color: var(--text-strong); font-weight: 700; cursor: pointer;
 }
-.ctl-btns button:hover { background: rgba(255, 255, 255, .08); }
-.controls select:focus-visible, .ctl-btns button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.ctl-btns button:hover { background: rgba(255, 255, 255, .06); }
+.ctl-link { display: inline-block; margin-top: 12px; color: var(--accent); font-size: .88rem; }
+.controls select:focus-visible, .ctl-btns button:focus-visible, .ctl-link:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
 
-.out ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: .9rem; color: #DCEFF3; }
-.out b { color: #fff; }
+.out summary { cursor: pointer; list-style: none; }
+.out summary::-webkit-details-marker { display: none; }
+.out summary .panel-label { display: inline; }
+.out summary::after { content: " +"; color: var(--text-muted); }
+.out[open] summary::after { content: " −"; }
+.out[open] ul { margin-top: 10px; }
+.out ul { margin: 0; padding-left: 1.1em; display: grid; gap: 5px; font-size: .86rem; color: var(--text-muted); }
+.out b { color: var(--text); }
 
 /* ---------- Narrow screens: stack ---------- */
 @media (max-width: 1100px) {
-  .stage { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 20px 16px 32px; }
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 16px; }
   .callout::before, .callout::after { display: none; }
-  .bar { padding: 12px 16px; }
+  .panel { padding-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .callout.changed { animation: none; }
+  .callout.changed, .hand, .hand svg, .hand-ripple::before { animation: none; }
 }
