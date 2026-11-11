@@ -6,7 +6,7 @@ This is a clickable demo. The AI steps are scripted.
 
 ## The four buttons
 
-- **Lesson start**: checks up to 3 items of equipment, one question at a time, based on the lesson (preset by the teacher). If something is missing: check your bag → ask the teacher for a spare → share with a partner → raise your hand. Then "Do you know what to do?" If not, take a photo of the starter and the app shows only the part to focus on.
+- **Lesson start**: checks up to 3 items of equipment, one question at a time, based on the lesson (from the school timetable; the teacher presets the items). If something is missing: check your bag → ask the teacher for a spare → share with a partner → raise your hand. Then "Do you know what to do?" If not, take a photo of the starter and the app shows only the part to focus on.
 - **Task start**: a big countdown timer (tap +1/+2/+5/+10), then where the task is (paper / Google Classroom / spoken), who you're working with, and whether it's an assessment. It flashes a check-in every 25% of the time.
 - **Lesson end**: pack-up checklist, including anything borrowed at lesson start, then homework.
 - **Assessments**: record a test, get a spaced revision plan and the best method for that subject (e.g. flashcards for vocab), with an example of what a good one looks like.

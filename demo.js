@@ -17,7 +17,7 @@ const NOTES = {
   },
   'ls-item': {
     title: 'A checklist that knows the lesson',
-    body: 'The school or teacher sets the three items that matter for each lesson: a calculator for maths, coloured pencils for geography. One question at a time avoids overload. Over time it could drop items a student always has.',
+    body: 'The app knows the lesson from the school timetable, and the teacher\'s preset for that class picks the three items that matter: a calculator for maths, coloured pencils for geography. One question at a time avoids overload. Over time it could drop items a student always has.',
     try: 'Answer No to see what happens when something is missing. Or change the lesson in the controls below.',
   },
   'ls-bag': {

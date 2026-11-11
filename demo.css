@@ -155,7 +155,6 @@ button, select { font: inherit; }
 
 .box { background: var(--box); border: 1px solid var(--box-line); border-radius: 14px; padding: 16px; }
 .controls label { display: block;  margin-bottom: 12px; font-weight: 700; font-size: .92rem; color: var(--text-strong); }
-.controls small { font-weight: 400; color: var(--text-muted); font-size: .78rem; margin-left: 4px; }
 .controls select {
   display: block; width: 100%; margin-top: 6px; padding: 9px 12px; border-radius: 9px; border: 0; background: var(--card); color: var(--ink);
 }

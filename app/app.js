@@ -5,8 +5,9 @@
 'use strict';
 
 /* ------------------------------------------------------------------ *
- * Preset lesson config. In the real thing the school/teacher sets
- * this up per class; the app only shows the 3 most important items.
+ * Preset lesson config. In the real thing the lesson comes from the school
+ * timetable and the teacher sets the items per class; the app only shows
+ * the 3 most important ones.
  * ------------------------------------------------------------------ */
 const SUBJECTS = {
   maths: {
@@ -191,7 +192,7 @@ function home() {
     <details class="settings" ${EMBED ? 'hidden' : ''}>
       <summary>Demo settings</summary>
       <div class="settings-body">
-        <label>Lesson (set by the teacher in the real app)
+        <label>Lesson
           <select id="setSubject">
             ${Object.entries(SUBJECTS).map(([k, v]) => `<option value="${k}" ${k === S.subject ? 'selected' : ''}>${v.name}</option>`).join('')}
           </select>
