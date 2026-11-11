@@ -67,7 +67,7 @@ const addDays = (n) => new Date(today().getTime() + n * DAY).toISOString();
 function freshState() {
   return {
     subject: 'maths',
-    speed: 1,
+    speed: EMBED ? 10 : 1,   // presenter page defaults to 10x so check-ins show quickly
     equip: {},            // item id -> 'had' | 'borrowed' | 'paper' | 'shared' | 'none'
     started: false,
     starterPhoto: null,

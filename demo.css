@@ -1,18 +1,22 @@
-/* Presenter page. Everything outside the iPad is warm grey with one muted
- * accent, so the app's own colours are the only strong colour on screen. */
+/* Presenter page. Everything outside the iPad is neutral grey (no hue at
+ * all), so the app's own colours are the only colour on screen.
+ * Add ?tone=warm to the URL for the warm-grey + muted-teal version. */
 :root {
-  --bg: #2B2927;
-  --bg-2: #353230;
+  --bg: #262626;
+  --bg-2: #313131;
   --box: rgba(255, 255, 255, .045);
-  --box-line: rgba(215, 210, 203, .16);
-  --text: #D7D2CB;           /* palette stone */
-  --text-muted: #A59C94;     /* palette taupe */
-  --text-strong: #F3F0EC;
-  --card: #EFEBE6;
-  --ink: #2B2927;
-  --ink-muted: #5E5751;
-  --accent: #8FC3C9;         /* muted teal */
-  --accent-soft: rgba(143, 195, 201, .16);
+  --box-line: rgba(255, 255, 255, .14);
+  --text: #D4D4D4;
+  --text-muted: #9E9E9E;
+  --text-strong: #F2F2F2;
+  --card: #EDEDED;
+  --ink: #262626;
+  --ink-muted: #5C5C5C;
+  --try: #DCDCDC;
+  --done: #757575;
+  --rim: #474747;
+  --accent: #BDBDBD;
+  --accent-soft: rgba(255, 255, 255, .1);
 
   --screen-w: 1180;
   --screen-h: 820;
@@ -20,6 +24,14 @@
   --k: .6;                   /* set by demo.js */
   --gap: 56px;
   --font: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root.warm {
+  --bg: #2B2927; --bg-2: #353230;
+  --box-line: rgba(215, 210, 203, .16);
+  --text: #D7D2CB; --text-muted: #A59C94; --text-strong: #F3F0EC;
+  --card: #EFEBE6; --ink: #2B2927; --ink-muted: #5E5751;
+  --try: #E0DAD3; --done: #7C746D; --rim: #4A4644;
+  --accent: #8FC3C9; --accent-soft: rgba(143, 195, 201, .16);
 }
 
 * { box-sizing: border-box; }
@@ -51,13 +63,13 @@ button, select { font: inherit; }
   width: calc((var(--screen-w) + 2 * var(--bezel)) * var(--k) * 1px);
   height: calc((var(--screen-h) + 2 * var(--bezel)) * var(--k) * 1px);
   padding: calc(var(--bezel) * var(--k) * 1px);
-  background: #0E0F11;
+  background: #0F0F0F;
   border-radius: calc(44 * var(--k) * 1px);
-  box-shadow: 0 0 0 2px #4A4644, 0 30px 80px rgba(0, 0, 0, .5);
+  box-shadow: 0 0 0 2px var(--rim), 0 30px 80px rgba(0, 0, 0, .5);
 }
 .ipad-cam {
   position: absolute; left: calc(var(--bezel) * var(--k) * .5px - 3px); top: 50%;
-  width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #26282B;
+  width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #272727;
 }
 .ipad-screen {
   width: calc(var(--screen-w) * var(--k) * 1px);
@@ -136,7 +148,7 @@ button, select { font: inherit; }
 .callout p:last-child { margin-bottom: 0; }
 .callout-try {
   margin-top: 12px !important; padding: 9px 12px; border-radius: 9px;
-  background: #E0DAD3; font-size: .92rem !important;
+  background: var(--try); font-size: .92rem !important;
 }
 
 .flow ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
@@ -150,7 +162,7 @@ button, select { font: inherit; }
   display: grid; place-items: center; font-size: .72rem; font-weight: 700;
   border: 1.5px solid currentColor;
 }
-.flow li.done { color: #7C746D; }
+.flow li.done { color: var(--done); }
 .flow li.on { background: var(--accent-soft); color: var(--text-strong); font-weight: 700; }
 .flow li.on::before { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 

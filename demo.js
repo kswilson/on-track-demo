@@ -3,6 +3,8 @@
 
 'use strict';
 
+if (new URLSearchParams(location.search).get('tone') === 'warm') document.documentElement.classList.add('warm');
+
 /* ---------- Notes for each app screen ---------- */
 const NOTES = {
   'home': {
@@ -17,8 +19,8 @@ const NOTES = {
   },
   'ls-item': {
     title: 'A checklist that knows the lesson',
-    body: 'The app knows the lesson from the school timetable, and the teacher\'s preset for that class picks the three items that matter: a calculator for maths, coloured pencils for geography. One question at a time avoids overload. Over time it could drop items a student always has.',
-    try: 'Answer No to see what happens when something is missing. Or change the lesson in the controls below.',
+    body: 'The lesson comes from the school timetable. The teacher\'s preset picks the three items that matter, such as a calculator for maths. One question at a time avoids overload.',
+    try: 'Answer No to see what happens when something is missing.',
   },
   'ls-bag': {
     title: 'Missing something? Sort it out, don\'t wait',
