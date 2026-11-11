@@ -2,52 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>On Track</title>
-  <meta name="description" content="A classroom companion that helps students get started, stay on task and pack up. Demo prototype.">
-  <meta name="theme-color" content="#26567D">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="On Track">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>On Track Demo</title>
+  <meta name="description" content="Interactive demo of On Track, a classroom companion for students with executive function difficulties.">
+  <meta name="theme-color" content="#003057">
+  <link rel="icon" href="app/assets/icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="demo.css">
 </head>
 <body>
-  <header class="topbar">
-    <button class="brand" data-home aria-label="On Track home">
-      <span class="brand-mark" aria-hidden="true"></span>
-      <span class="brand-name">On Track</span>
-    </button>
-    <div class="topbar-right">
-      <button class="timer-chip" id="timerChip" hidden aria-label="Task timer, open task">
-        <span class="timer-chip-dot" aria-hidden="true"></span><span data-timer-text>0:00</span>
-      </button>
-      <span class="lesson-label" id="lessonLabel">Maths</span>
+  <header class="bar">
+    <div class="bar-title">
+      <img src="app/assets/icon.svg" alt="" width="32" height="32">
+      <div>
+        <strong>On Track</strong>
+        <span>Interactive demo · Digital Lab</span>
+      </div>
     </div>
+    <a class="bar-link" href="app/" target="_blank" rel="noopener">Open the app on its own ↗</a>
   </header>
 
-  <main id="view" class="view" tabindex="-1" aria-live="polite"></main>
+  <main class="stage">
+    <section class="device-col" aria-label="The app, running on an iPad">
+      <div class="ipad" id="ipad">
+        <span class="ipad-cam" aria-hidden="true"></span>
+        <div class="ipad-screen">
+          <iframe id="app" src="app/" title="On Track app"></iframe>
+        </div>
+      </div>
+      <p class="device-caption">This is the live app. Tap it.</p>
+    </section>
 
-  <div class="checkin" id="checkin" hidden role="alertdialog" aria-modal="true" aria-labelledby="checkinTitle">
-    <div class="checkin-card">
-      <p class="kicker" id="checkinKicker">Check-in</p>
-      <h2 id="checkinTitle">Still on task?</h2>
-      <p id="checkinBody"></p>
-      <div class="checkin-bar"><span id="checkinBar"></span></div>
-      <div class="btn-row" id="checkinBtns"></div>
-    </div>
-  </div>
+    <aside class="panel" aria-label="Demo notes">
+      <section class="callout" id="callout" aria-live="polite">
+        <p class="callout-kicker" id="calloutKicker">Home</p>
+        <h2 id="calloutTitle">Four buttons</h2>
+        <p id="calloutBody"></p>
+        <p class="callout-try" id="calloutTry" hidden><b>Try:</b> <span></span></p>
+      </section>
 
-  <footer class="foot">
-    <span>Demo prototype. AI responses are scripted.</span>
-    <span id="wakeStatus"></span>
-  </footer>
+      <section class="flow" id="flow" hidden>
+        <p class="panel-label" id="flowLabel">Flow</p>
+        <ol id="flowSteps"></ol>
+      </section>
 
-  <script src="app.js"></script>
+      <section class="controls">
+        <p class="panel-label">Demo controls</p>
+        <label>Lesson
+          <select id="ctlSubject">
+            <option value="maths">Maths</option>
+            <option value="physics">Physics</option>
+            <option value="geography">Geography</option>
+          </select>
+          <small>Set by the teacher in the real app. Changes the Lesson start checklist.</small>
+        </label>
+        <label>Timer speed
+          <select id="ctlSpeed">
+            <option value="1">Real time</option>
+            <option value="10">10× faster</option>
+            <option value="60">60× faster</option>
+          </select>
+          <small>Speeds up Task start so the check-ins appear quickly.</small>
+        </label>
+        <div class="ctl-btns">
+          <button id="ctlHome">App home</button>
+          <button id="ctlReset">Reset demo</button>
+        </div>
+      </section>
+
+      <section class="out">
+        <p class="panel-label">Not in this demo yet</p>
+        <ul>
+          <li><b>Real AI.</b> Photo reading and voice transcription are scripted.</li>
+          <li><b>Google Classroom and Moodle.</b> The assignment list is made up.</li>
+          <li><b>Rewards.</b> Waiting on the digital lab team's research.</li>
+          <li><b>Note to self.</b> Dropped from the first version.</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <script src="demo.js"></script>
 </body>
 </html>

@@ -348,6 +348,22 @@ button:focus-visible, .btn:focus-within, a:focus-visible, input:focus-visible, s
   .view { padding-top: 32px; }
   .card { padding: 30px 32px; }
 }
+/* Landscape tablet: use the width */
+@media (min-width: 1000px) {
+  .view { max-width: 1000px; }
+  .tiles { gap: 20px; }
+  .tile { min-height: 215px; padding: 22px; }
+  .tile-title { font-size: 1.45rem; }
+  .card { max-width: 820px; margin: 0 auto; }
+}
+@media (min-width: 1000px) and (max-height: 900px) {
+  .view { padding-top: 20px; }
+  .ring { width: 200px; }
+  .ring-label strong { font-size: 3rem; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
 }
+
+/* Inside the presenter page the panel provides demo info and settings */
+.embedded .foot { display: none; }

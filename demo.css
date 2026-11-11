@@ -1,0 +1,177 @@
+/* Presenter page: the iPad holds the app; everything else is demo info. */
+:root {
+  --teal: #30CDD7;
+  --teal-light: #9BD3DD;
+  --stone: #D7D2CB;
+  --taupe: #A59C94;
+  --navy: #003057;
+  --blue: #26567D;
+  --yellow: #FFCB00;
+
+  --stage: #003057;
+  --stage-2: #0A3D66;
+  --card: #FFFFFF;
+  --ink: #003057;
+  --ink-muted: #4F6375;
+  --on-stage: #FFFFFF;
+  --on-stage-muted: #9BD3DD;
+
+  /* iPad (landscape, 11") logical screen size */
+  --screen-w: 1180;
+  --screen-h: 820;
+  --bezel: 26;
+  --k: .6; /* scale, set by demo.js */
+  --font: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  min-height: 100dvh;
+  font-family: var(--font);
+  background: radial-gradient(1200px 700px at 30% 40%, var(--stage-2), var(--stage));
+  color: var(--on-stage);
+  line-height: 1.45;
+}
+button, select { font: inherit; }
+
+/* ---------- Top bar ---------- */
+.bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 28px;
+  border-bottom: 1px solid rgba(155, 211, 221, .2);
+}
+.bar-title { display: flex; align-items: center; gap: 12px; }
+.bar-title img { border-radius: 8px; }
+.bar-title strong { display: block; font-size: 1.15rem; }
+.bar-title span { font-size: .85rem; color: var(--on-stage-muted); }
+.bar-link {
+  color: var(--navy); background: var(--yellow); text-decoration: none; font-weight: 700;
+  padding: 8px 16px; border-radius: 999px; font-size: .9rem;
+}
+.bar-link:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+
+/* ---------- Stage layout ---------- */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  gap: 64px;
+  align-items: start;
+  padding: 32px 28px 40px;
+  max-width: 1720px;
+  margin: 0 auto;
+}
+
+/* ---------- iPad ---------- */
+.device-col { min-width: 0; display: grid; justify-items: center; }
+.ipad {
+  position: relative;
+  width: calc((var(--screen-w) + 2 * var(--bezel)) * var(--k) * 1px);
+  height: calc((var(--screen-h) + 2 * var(--bezel)) * var(--k) * 1px);
+  padding: calc(var(--bezel) * var(--k) * 1px);
+  background: #11161C;
+  border-radius: calc(46 * var(--k) * 1px);
+  box-shadow:
+    0 0 0 calc(2 * var(--k) * 1px) #3A4450,
+    0 30px 80px rgba(0, 0, 0, .45);
+}
+.ipad-cam {
+  position: absolute; left: calc(var(--bezel) * var(--k) * .5px - 3px); top: 50%;
+  width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #2A323C;
+}
+.ipad-screen {
+  width: calc(var(--screen-w) * var(--k) * 1px);
+  height: calc(var(--screen-h) * var(--k) * 1px);
+  border-radius: calc(22 * var(--k) * 1px);
+  overflow: hidden;
+  background: #F5F3F0;
+}
+.ipad-screen iframe {
+  display: block; border: 0;
+  width: calc(var(--screen-w) * 1px);
+  height: calc(var(--screen-h) * 1px);
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+}
+.device-caption { margin: 16px 0 0; font-size: .9rem; color: var(--on-stage-muted); }
+
+/* ---------- Panel ---------- */
+.panel { display: grid; gap: 18px; min-width: 0; }
+.panel-label {
+  margin: 0 0 10px; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--on-stage-muted);
+}
+
+/* The callout points back at the iPad */
+.callout {
+  position: relative;
+  background: var(--card); color: var(--ink);
+  border-radius: 16px; padding: 22px 22px 20px;
+  border-left: 6px solid var(--teal);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
+}
+.callout::before {          /* connector line into the gap */
+  content: ""; position: absolute; top: 34px; left: -70px; width: 64px; height: 2px;
+  background: var(--teal);
+}
+.callout::after {           /* dot at the iPad end */
+  content: ""; position: absolute; top: 29px; left: -76px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 0 5px rgba(48, 205, 215, .25);
+}
+.callout.changed { animation: pop .35s ease; }
+@keyframes pop { from { opacity: .3; transform: translateX(8px); } }
+.callout-kicker {
+  margin: 0 0 6px; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue);
+}
+.callout h2 { margin: 0 0 10px; font-size: 1.35rem; line-height: 1.2; }
+.callout p { margin: 0 0 10px; }
+.callout p:last-child { margin-bottom: 0; }
+.callout-try {
+  margin-top: 14px !important; padding: 10px 12px; border-radius: 10px;
+  background: #FFF5CC; font-size: .95rem;
+}
+
+.flow ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; counter-reset: s; }
+.flow li {
+  counter-increment: s;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 10px; border-radius: 8px; font-size: .92rem; color: var(--on-stage-muted);
+}
+.flow li::before {
+  content: counter(s); flex: none; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: .75rem; font-weight: 700;
+  border: 1.5px solid currentColor;
+}
+.flow li.done { color: rgba(255, 255, 255, .55); }
+.flow li.on { background: rgba(48, 205, 215, .16); color: #fff; font-weight: 700; }
+.flow li.on::before { background: var(--teal); border-color: var(--teal); color: var(--navy); }
+
+.controls, .out {
+  background: rgba(255, 255, 255, .06); border: 1px solid rgba(155, 211, 221, .22);
+  border-radius: 16px; padding: 18px;
+}
+.controls label { display: grid; gap: 6px; margin-bottom: 14px; font-weight: 700; font-size: .95rem; }
+.controls small { font-weight: 400; color: var(--on-stage-muted); font-size: .8rem; }
+.controls select {
+  padding: 10px 12px; border-radius: 10px; border: 0; background: #fff; color: var(--ink);
+}
+.ctl-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ctl-btns button {
+  padding: 10px; border-radius: 10px; border: 1.5px solid var(--teal-light);
+  background: transparent; color: #fff; font-weight: 700; cursor: pointer;
+}
+.ctl-btns button:hover { background: rgba(255, 255, 255, .08); }
+.controls select:focus-visible, .ctl-btns button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+.out ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: .9rem; color: #DCEFF3; }
+.out b { color: #fff; }
+
+/* ---------- Narrow screens: stack ---------- */
+@media (max-width: 1100px) {
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 20px 16px 32px; }
+  .callout::before, .callout::after { display: none; }
+  .bar { padding: 12px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .callout.changed { animation: none; }
+}

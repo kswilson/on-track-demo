@@ -49,6 +49,13 @@ const ICONS = {
 const icon = (name) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
 
+const EMBED = window.self !== window.top;
+let lastScreen = 'home';
+function emit(screen, transient) {
+  if (!transient) lastScreen = screen;
+  if (EMBED) window.parent.postMessage({ source: 'ontrack', type: 'screen', screen }, '*');
+}
+
 /* ------------------------------------------------------------------ *
  * State (persisted per device; demo only)
  * ------------------------------------------------------------------ */
@@ -118,6 +125,7 @@ function card(o) {
     ? `<label class="btn ${b.kind || 'primary'}"><input type="file" accept="image/*" capture="environment" data-file="${i}">${b.label}</label>`
     : `<button class="btn ${b.kind || 'primary'}" data-b="${i}" ${b.disabled ? 'disabled' : ''}>${b.label}</button>`).join('');
   const two = buttons.length === 2 && !o.stack;
+  if (o.screen) emit(o.screen);
   render(`
     <section class="card">
       <div class="card-top">
@@ -155,6 +163,7 @@ function updateChrome() {
  * Home
  * ------------------------------------------------------------------ */
 function home() {
+  emit('home');
   const s = subj();
   const borrowed = s.items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
   const pills = [
@@ -182,7 +191,7 @@ function home() {
       ${tile('assess', 'navy', 'assess', 'Assessments', 'Tests and revision')}
     </div>
 
-    <details class="settings">
+    <details class="settings" ${EMBED ? 'hidden' : ''}>
       <summary>Demo settings</summary>
       <div class="settings-body">
         <label>Lesson (set by the teacher in the real app)
@@ -215,7 +224,7 @@ function home() {
  * ------------------------------------------------------------------ */
 function lessonStart() {
   S.equip = {}; S.started = false; S.starterPhoto = null;
-  card({
+  card({ screen: 'ls-intro',
     kicker: 'Lesson start',
     title: `${esc(subj().name)}. Let's check you're ready.`,
     body: `<p>Three quick questions about your equipment, then the starter task.</p>`,
@@ -232,7 +241,7 @@ function itemStep(i) {
   const next = () => itemStep(i + 1);
   const set = (v) => { S.equip[it.id] = v; save(); };
 
-  const ask = () => card({
+  const ask = () => card({ screen: 'ls-item',
     kicker, steps,
     title: `Have you got ${esc(it.your)}?`,
     buttons: [
@@ -240,7 +249,7 @@ function itemStep(i) {
       { label: 'No', kind: 'no', on: bag },
     ],
   });
-  const bag = () => card({
+  const bag = () => card({ screen: 'ls-bag',
     kicker, steps,
     title: 'Is it in your bag?',
     body: '<p>Have a proper look, including the front pocket.</p>',
@@ -249,7 +258,7 @@ function itemStep(i) {
       { label: 'Not there', kind: 'no', on: spare },
     ],
   });
-  const spare = () => card({
+  const spare = () => card({ screen: 'ls-spare',
     kicker, steps,
     title: esc(it.spareQ || `Ask your teacher: do they have a spare ${it.name}?`),
     body: '<p>Walk over quietly and ask. Teachers would rather lend one than have you sit and wait.</p>',
@@ -258,7 +267,7 @@ function itemStep(i) {
       { label: it.spareNo || 'No spare', kind: 'no', on: partner },
     ],
   });
-  const partner = () => card({
+  const partner = () => card({ screen: 'ls-partner',
     kicker, steps,
     title: `Can you share with your partner?`,
     buttons: [
@@ -266,7 +275,7 @@ function itemStep(i) {
       { label: 'No', kind: 'no', on: hand },
     ],
   });
-  const hand = () => card({
+  const hand = () => card({ screen: 'ls-hand',
     kicker, steps,
     title: 'Raise your hand',
     body: `<p>Let your teacher know you haven't got ${esc(it.your.replace(/^(your|a) /, 'a '))}. That's OK. They'll sort something out.</p>`,
@@ -276,7 +285,7 @@ function itemStep(i) {
 }
 
 function knowStarter() {
-  card({
+  card({ screen: 'ls-know',
     kicker: 'Starter task',
     title: 'Do you know what to do for the starter?',
     buttons: [
@@ -294,7 +303,7 @@ const starterCtx = () => ({
 function ready(msg) {
   const s = subj();
   const borrowed = s.items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
-  card({
+  card({ screen: 'ready',
     kicker: 'Lesson start',
     title: "You're ready",
     body: `<p>${esc(msg)}</p>`,
@@ -309,7 +318,7 @@ function ready(msg) {
 
 /* Photo capture: real camera on a device, or the bundled example. */
 function photoStep({ next, title = 'Take a photo of the starter task', kicker = 'Starter task' }) {
-  card({
+  card({ screen: 'photo',
     kicker,
     title,
     body: '<p>Get the whole slide or sheet in the picture.</p>',
@@ -322,7 +331,7 @@ function photoStep({ next, title = 'Take a photo of the starter task', kicker = 
 }
 
 function analyse(photo, ctx) {
-  card({
+  card({ screen: 'analyse',
     kicker: 'Reading the task',
     title: 'Looking at your photo…',
     extra: `<img class="thumb" src="${photo}" alt="Your photo"><div class="spinner" role="status" aria-label="Working"></div>`,
@@ -334,7 +343,7 @@ function analyse(photo, ctx) {
  * notice it is differentiated A/B/C, start with A, show only question 1. */
 function chunkStep(photo, ctx) {
   const own = photo !== 'assets/starter.jpg';
-  card({
+  card({ screen: 'chunk',
     kicker: 'Starter task · one bit at a time',
     title: 'There are three sets: A, B and C. Start with A.',
     img: { src: 'assets/part-a-q1.jpg', alt: 'Section A, question 1: Burlet is on a bearing of 080° from Leighton. Find angle a.', focus: true },
@@ -351,7 +360,7 @@ function chunkStep(photo, ctx) {
 /* Help ladder: brain/notes → friend → teacher */
 function ladder(stage, ctx) {
   const top = ctx.top ? ctx.top() : '';
-  if (stage === 0) return card({
+  if (stage === 0) return card({ screen: 'ladder-0',
     top, ladder: 0, kicker: 'Getting unstuck',
     title: 'Look in your notes',
     body: '<p>Find last lesson\'s work on this topic, or look in your textbook. Is there an example that looks like this?</p>',
@@ -360,7 +369,7 @@ function ladder(stage, ctx) {
       { label: 'Still stuck', kind: 'no', on: () => ladder(1, ctx) },
     ],
   });
-  if (stage === 1) return card({
+  if (stage === 1) return card({ screen: 'ladder-1',
     top, ladder: 1, kicker: 'Getting unstuck',
     title: 'Ask the person next to you',
     body: '<p>It\'s fine to talk quietly about this. Can you work out the first step together?</p>',
@@ -369,7 +378,7 @@ function ladder(stage, ctx) {
       { label: 'Still stuck', kind: 'no', on: () => ladder(2, ctx) },
     ],
   });
-  return card({
+  return card({ screen: 'ladder-2',
     top, ladder: 2, kicker: 'Getting unstuck',
     title: 'Raise your hand',
     body: '<p>Your teacher will come to you. While you wait, copy out the question and write down anything you already know.</p>',
@@ -444,7 +453,7 @@ function checkIn(p) {
   document.getElementById('checkinBody').textContent = b;
   document.getElementById('checkinBar').style.width = `${p * 100}%`;
   const btns = document.getElementById('checkinBtns');
-  const close = () => { box.hidden = true; };
+  const close = () => { box.hidden = true; emit(lastScreen); };
   if (p === 1) {
     btns.className = 'btn-row';
     btns.innerHTML = '<button class="btn primary">OK</button>';
@@ -456,6 +465,7 @@ function checkIn(p) {
     btns.children[1].onclick = () => { close(); ladder(0, taskCtx()); };
   }
   box.hidden = false;
+  emit(p === 1 ? 'timeup' : 'checkin', true);
   // Restart the flash animation if it's shown again
   box.style.animation = 'none'; void box.offsetWidth; box.style.animation = '';
   btns.firstChild.focus();
@@ -469,7 +479,7 @@ function taskStart() {
   if (T.total && !T.done) return focusView();
   S.task = {};
   let secs = 0;
-  card({
+  card({ screen: 'ts-set',
     kicker: 'Task start',
     title: 'How long did your teacher give you?',
     extra: `
@@ -500,7 +510,7 @@ const taskTop = () => ringHtml(true);
 const taskCtx = () => ({ top: taskTop, ok: focusView, stuckDone: focusView });
 
 function whereStep() {
-  card({
+  card({ screen: 'ts-where',
     top: taskTop(), kicker: 'Task start', steps: { i: 0, n: 4 },
     title: 'Where is the task?',
     buttons: [
@@ -516,7 +526,7 @@ function whereStep() {
 
 function classroomStep() {
   const tasks = ['Bearings: practice questions', '3D Pythagoras worksheet', 'Angles in polygons: revision'];
-  card({
+  card({ screen: 'ts-classroom',
     top: taskTop(), kicker: 'Google Classroom', steps: { i: 0, n: 4 },
     title: 'Which assignment is it?',
     body: '<p class="muted small">Demo: in the real app this list comes from Google Classroom.</p>',
@@ -525,7 +535,7 @@ function classroomStep() {
 }
 
 function spokenStep() {
-  card({
+  card({ screen: 'ts-spoken',
     top: taskTop(), kicker: 'Task start', steps: { i: 0, n: 4 },
     title: 'Say what you think the task is',
     extra: `<button class="mic" id="mic" aria-label="Start recording">${icon('mic')}</button>
@@ -552,7 +562,7 @@ function spokenStep() {
 
 function whoStep() {
   const pick = (v) => () => { S.task.who = v; assessStep(); };
-  card({
+  card({ screen: 'ts-who',
     top: taskTop(), kicker: 'Task start', steps: { i: 1, n: 4 },
     title: 'Who are you working with?',
     buttons: [
@@ -564,7 +574,7 @@ function whoStep() {
 }
 
 function assessStep() {
-  card({
+  card({ screen: 'ts-assess',
     top: taskTop(), kicker: 'Task start', steps: { i: 2, n: 4 },
     title: 'Is this an assessment?',
     body: '<p class="muted small">For example a quick knowledge check or a test.</p>',
@@ -576,7 +586,7 @@ function assessStep() {
 }
 
 function knowTask() {
-  card({
+  card({ screen: 'ts-know',
     top: taskTop(), kicker: 'Task start', steps: { i: 3, n: 4 },
     title: 'Do you know what to do first?',
     buttons: [
@@ -591,7 +601,7 @@ function focusView() {
   const t = S.task || {};
   const chips = [t.where, t.who, t.assessment ? 'Assessment' : ''].filter(Boolean)
     .map((c) => `<span class="pill">${esc(c)}</span>`).join('');
-  card({
+  card({ screen: 'ts-focus',
     top: ringHtml(false), kicker: 'Working',
     title: 'Keep going. I\'ll check in with you.',
     body: `${chips ? `<div class="status-row" style="margin:0 0 6px">${chips}</div>` : ''}
@@ -601,7 +611,7 @@ function focusView() {
       { label: 'I\'m stuck', kind: 'accent', on: () => ladder(0, taskCtx()) },
       { label: 'I\'ve finished', kind: 'yes', on: () => {
         stopTimer();
-        card({
+        card({ screen: 'ts-done',
           kicker: 'Task done', title: 'Nice work.',
           body: '<p>Check your work, then look up for what\'s next.</p>',
           buttons: [{ label: 'Back to home', kind: 'primary', on: home }],
@@ -629,7 +639,7 @@ function lessonEnd() {
   rows.push({ label: 'Pencil case and bag' });
   rows.push({ label: 'Anything you left outside the room?', sub: 'Bag, coat, PE kit, instrument' });
 
-  card({
+  card({ screen: 'le-pack',
     kicker: 'Lesson end',
     title: 'Pack up',
     body: '<p>Tap each one when it\'s in your bag.</p>',
@@ -652,13 +662,13 @@ function lessonEnd() {
 }
 
 function homeworkStep() {
-  card({
+  card({ screen: 'le-hw',
     kicker: 'Lesson end',
     title: 'Did your teacher set homework?',
     buttons: [
       { label: 'Yes', kind: 'yes', on: homeworkForm },
       { label: 'No', kind: 'no', on: endDone },
-      { label: 'Not sure', kind: 'ghost', on: () => card({
+      { label: 'Not sure', kind: 'ghost', on: () => card({ screen: 'le-unsure',
         kicker: 'Lesson end', title: 'Check before you go',
         body: '<p>Look on Google Classroom tonight, or ask your teacher on your way out.</p>',
         buttons: [{ label: 'OK', kind: 'primary', on: endDone }],
@@ -671,7 +681,7 @@ function homeworkStep() {
 function homeworkForm() {
   let due = null;
   const opts = [['Tomorrow', 1], ['Next lesson', 2], ['In a week', 7]];
-  card({
+  card({ screen: 'le-hwform',
     kicker: 'Homework',
     title: 'What is it?',
     extra: `
@@ -702,7 +712,7 @@ function homeworkForm() {
 
 function endDone(extra) {
   const borrowed = subj().items.filter((it) => S.equip[it.id] === 'borrowed').map((it) => it.name);
-  card({
+  card({ screen: 'le-done',
     kicker: 'Lesson end',
     title: 'All packed. See you next lesson.',
     body: typeof extra === 'string' ? `<p>${esc(extra)}</p>` : '',
@@ -725,7 +735,7 @@ const itemTitle = (a) => (a.kind === 'homework' ? `${a.subject} homework` : `${a
 
 function assessments() {
   const list = [...S.items].sort((a, b) => new Date(a.due) - new Date(b.due));
-  card({
+  card({ screen: 'as-list',
     kicker: 'Assessments',
     title: 'Coming up',
     extra: list.length ? `<ul class="list">${list.map((a) => `
@@ -748,7 +758,7 @@ function assessments() {
 }
 
 function homeworkView(a) {
-  card({
+  card({ screen: 'as-hw',
     kicker: `Homework · ${dueText(a.due)}`,
     title: esc(itemTitle(a)),
     body: `<p class="quote">${esc(a.title)}</p><p class="muted">Due ${dateText(a.due)}</p>`,
@@ -764,7 +774,7 @@ function addAssessment() {
   const subjects = ['Maths', 'English', 'Science', 'French', 'Spanish', 'History', 'Geography'];
   const whens = [['In 1 week', 7], ['In 2 weeks', 14], ['In 3 weeks', 21]];
   const chips = (key, opts) => `<div class="chips">${opts.map(([l, v]) => `<button class="chip" data-k="${key}" data-v="${v}">${l}</button>`).join('')}</div>`;
-  card({
+  card({ screen: 'as-add',
     kicker: 'Assessments',
     title: 'Add a test',
     body: '<p class="muted small">Fill this in when your teacher tells the class about it.</p>',
@@ -829,7 +839,7 @@ function planView(a) {
   const tasks = n === 1 ? [st.tasks[st.tasks.length - 1]] : [...st.tasks.slice(0, n - 1), st.tasks[st.tasks.length - 1]];
   const rows = offs.map((o, k) => `<li><b>${dateText(addDays(o))}</b><span>${esc(tasks[k])} <span class="muted small">· 20 min</span></span></li>`).join('');
 
-  card({
+  card({ screen: 'as-plan',
     kicker: `${esc(itemTitle(a))} · ${dueText(a.due)}`,
     title: 'Your revision plan',
     body: a.topics ? `<p class="muted">Covers: ${esc(a.topics)}</p>` : '',
@@ -866,7 +876,7 @@ function exampleView(a, st) {
       <li>Add the solid and stir</li><li>Record the highest temperature reached</li></ol></div>`,
   };
   if (st.ex !== 'flash') {
-    return card({ kicker: `Example · ${st.name}`, title: 'What a good one looks like', extra: ex[st.ex], buttons: back });
+    return card({ screen: 'as-example', kicker: `Example · ${st.name}`, title: 'What a good one looks like', extra: ex[st.ex], buttons: back });
   }
   const decks = {
     Spanish: [['el pan', 'bread'], ['las patatas', 'potatoes'], ['el desayuno', 'breakfast']],
@@ -874,7 +884,7 @@ function exampleView(a, st) {
   };
   const deck = decks[a.subject] || decks.default;
   let i = 0;
-  card({
+  card({ screen: 'as-example',
     kicker: 'Example · Flashcards',
     title: 'Tap the card to flip it',
     extra: `<div class="flash-wrap"><button class="flash" id="flash" aria-label="Flashcard. Tap to flip."></button></div>
@@ -912,5 +922,33 @@ function showWake() {
 document.addEventListener('click', keepAwake);
 document.addEventListener('visibilitychange', keepAwake);
 
+/* ------------------------------------------------------------------ *
+ * Presenter page bridge: when embedded in the demo page, report the
+ * current screen and accept settings from the panel next to the iPad.
+ * ------------------------------------------------------------------ */
+function applyFromPanel(msg) {
+  if (msg.type === 'subject' && SUBJECTS[msg.value]) {
+    S.subject = msg.value; S.equip = {}; S.started = false; save(); home();
+  } else if (msg.type === 'speed') {
+    setSpeed(+msg.value);
+  } else if (msg.type === 'reset') {
+    document.getElementById('checkin').hidden = true;
+    stopTimer(); S = freshState(); save(); home();
+  } else if (msg.type === 'home') {
+    document.getElementById('checkin').hidden = true;
+    home();
+  }
+  sendState();
+}
+function sendState() {
+  if (EMBED) window.parent.postMessage({ source: 'ontrack', type: 'state', subject: S.subject, speed: S.speed }, '*');
+}
+window.addEventListener('message', (e) => {
+  if (e.source !== window.parent || !e.data || e.data.source !== 'ontrack-panel') return;
+  applyFromPanel(e.data);
+});
+
+if (EMBED) document.documentElement.classList.add('embedded');
 home();
+sendState();
 keepAwake();
