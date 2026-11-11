@@ -1,6 +1,6 @@
 {
-  "name": "On Track",
-  "short_name": "On Track",
+  "name": "Lesson mode",
+  "short_name": "Lesson mode",
   "description": "A classroom companion that helps students get started, stay on task and pack up.",
   "start_url": "./",
   "scope": "./",

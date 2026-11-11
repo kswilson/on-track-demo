@@ -104,7 +104,8 @@ button, select { font: inherit; }
 }
 
 /* ---------- Panel ---------- */
-.panel { display: grid; gap: 16px; min-width: 0; padding-top: 40px; }
+.panel { display: grid; gap: 14px; min-width: 0; }
+.panel-title { margin: 0 0 4px; font-size: 1.3rem; color: var(--text-strong); letter-spacing: .01em; }
 .panel-label {
   margin: 0 0 10px; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-muted);
@@ -154,18 +155,21 @@ button, select { font: inherit; }
 .flow li.on::before { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 
 .box { background: var(--box); border: 1px solid var(--box-line); border-radius: 14px; padding: 16px; }
-.controls label { display: block;  margin-bottom: 12px; font-weight: 700; font-size: .92rem; color: var(--text-strong); }
+.ctl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.controls label { display: block;  margin: 0; font-weight: 700; font-size: .92rem; color: var(--text-strong); }
 .controls select {
   display: block; width: 100%; margin-top: 6px; padding: 9px 12px; border-radius: 9px; border: 0; background: var(--card); color: var(--ink);
 }
-.ctl-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.ctl-btns button {
-  padding: 9px; border-radius: 9px; border: 1.5px solid var(--box-line);
-  background: transparent; color: var(--text-strong); font-weight: 700; cursor: pointer;
+.ctl-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.ctl-btns button, .ctl-btns a {
+  display: grid; place-items: center; text-align: center;
+  padding: 8px 6px; border-radius: 9px; border: 1.5px solid var(--box-line);
+  background: transparent; color: var(--text-strong); font-weight: 700; font-size: .82rem; line-height: 1.2;
+  cursor: pointer; text-decoration: none;
 }
-.ctl-btns button:hover { background: rgba(255, 255, 255, .06); }
-.ctl-link { display: inline-block; margin-top: 12px; color: var(--accent); font-size: .88rem; }
-.controls select:focus-visible, .ctl-btns button:focus-visible, .ctl-link:focus-visible {
+.ctl-btns a { color: var(--accent); }
+.ctl-btns button:hover, .ctl-btns a:hover { background: rgba(255, 255, 255, .06); }
+.controls select:focus-visible, .ctl-btns button:focus-visible, .ctl-btns a:focus-visible {
   outline: 3px solid var(--accent); outline-offset: 2px;
 }
 
@@ -182,7 +186,6 @@ button, select { font: inherit; }
 @media (max-width: 1100px) {
   .stage { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 16px; }
   .callout::before, .callout::after { display: none; }
-  .panel { padding-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .callout.changed, .hand, .hand svg, .hand-ripple::before { animation: none; }

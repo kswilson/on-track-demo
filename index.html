@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>On Track Demo</title>
-  <meta name="description" content="Interactive demo of On Track, a classroom companion for students with executive function difficulties.">
+  <title>Lesson mode demo</title>
+  <meta name="description" content="Interactive demo of Lesson mode, a classroom companion for students with executive function difficulties.">
   <meta name="theme-color" content="#2B2927">
   <link rel="icon" href="app/assets/icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,11 +14,11 @@
 </head>
 <body>
   <main class="stage">
-    <section class="device-col" aria-label="The On Track app, running on an iPad">
+    <section class="device-col" aria-label="The Lesson mode app, running on an iPad">
       <div class="ipad" id="ipad">
         <span class="ipad-cam" aria-hidden="true"></span>
         <div class="ipad-screen">
-          <iframe id="app" src="app/" title="On Track app"></iframe>
+          <iframe id="app" src="app/" title="Lesson mode app"></iframe>
         </div>
         <div class="hand" id="hand" hidden aria-hidden="true">
           <span class="hand-ripple"></span>
@@ -31,6 +31,7 @@
     </section>
 
     <aside class="panel" aria-label="Demo notes">
+      <h1 class="panel-title">Lesson mode</h1>
       <section class="callout" id="callout" aria-live="polite">
         <p class="callout-kicker" id="calloutKicker">Home</p>
         <h2 id="calloutTitle">Four buttons</h2>
@@ -45,6 +46,7 @@
 
       <section class="box controls">
         <p class="panel-label">Demo controls</p>
+        <div class="ctl-row">
         <label>Lesson
           <select id="ctlSubject">
             <option value="maths">Maths</option>
@@ -59,11 +61,12 @@
             <option value="60">60× faster</option>
           </select>
         </label>
+        </div>
         <div class="ctl-btns">
           <button id="ctlHome">App home</button>
           <button id="ctlReset">Reset demo</button>
+          <a href="app/" target="_blank" rel="noopener">Open the app on its own ↗</a>
         </div>
-        <a class="ctl-link" href="app/" target="_blank" rel="noopener">Open the app on its own ↗</a>
       </section>
 
       <details class="box out">

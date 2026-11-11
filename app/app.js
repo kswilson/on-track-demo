@@ -181,7 +181,7 @@ function home() {
 
   render(`
     ${pills ? `<div class="status-row home-status">${pills}</div>` : ''}
-    <h1 class="sr-only">On Track</h1>
+    <h1 class="sr-only">Lesson mode</h1>
     <div class="tiles">
       ${tile('start', 'teal', 'start', 'Lesson start', 'Check you\'re ready')}
       ${tile('task', 'yellow', 'task', 'Task start', 'Timer and getting going')}
@@ -357,7 +357,7 @@ function chunkStep(photo, ctx) {
     img: { src: 'assets/part-a-q1.jpg', alt: 'Section A, question 1: Burlet is on a bearing of 080° from Leighton. Find angle a.', focus: true },
     body: '<p>Just do <b>question 1</b> for now. Ignore everything else on the sheet.</p>',
     note: (own ? 'Demo: your photo isn\'t really analysed. This shows what would happen with the example worksheet.<br>' : '')
-      + 'On Track won\'t give you answers. It helps you get started.',
+      + 'This app won\'t give you answers. It helps you get started.',
     buttons: [
       { label: 'I can do this', kind: 'yes', on: ctx.ok },
       { label: 'Still stuck', kind: 'no', on: () => ladder(0, ctx) },

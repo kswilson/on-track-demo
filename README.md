@@ -1,6 +1,6 @@
-# On Track (demo)
+# Lesson mode (On Track demo)
 
-A classroom companion for students who struggle with executive function: getting started, staying on task, and packing up. It prompts students towards independence (brain → friend → teacher) and never gives subject answers.
+This is **Lesson mode**: the in-class part of the app. A classroom companion for students who struggle with executive function: getting started, staying on task, and packing up. It prompts students towards independence (brain → friend → teacher) and never gives subject answers.
 
 This is a clickable demo. The AI steps are scripted.
 
